@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript MCQ Test</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body{
+            background-color:#f4f6f9;
+        }
+
+        .exam-container{
+            max-width:1000px;
+            margin:auto;
+        }
+
+        .timer-box{
+            font-size:20px;
+            font-weight:bold;
+        }
+
+        .list-group-item{
+            cursor:pointer;
+            transition:0.3s;
+            height: 100px;
+            font-size: 20px;
+        
+            
+        }
+
+        .list-group-item:hover{
+            background-color:#eef5ff;
+        }
+
+        .question-card{
+            min-height:400px;
+        }
+
+        .progress{
+            height:10px;
+        }
+        .adjust{
+            padding-top: 100px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container py-5">
+
+    <div class="exam-container">
+
+        <div class="card shadow-lg border-0">
+
+            <!-- Header -->
+            <div class="card-header bg-primary text-white py-3">
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+                        <h3 class="mb-0">JavaScript MCQ Test</h3>
+                        <small>Total Questions: 20</small>
+                    </div>
+
+                    <div class="bg-white text-dark px-4 py-2 rounded timer-box">
+                        ⏰<p id="timer"></p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Progress Section -->
+            <div class="p-4 border-bottom">
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span><strong>Question <p id="count" style="display: inline;"></p> of 20</strong></span>
+                    <span class="progress-persent"></span>
+                </div>
+
+                <div class="progress">
+                    <div class="progress-bar" ></div>
+                    
+                </div>
+                
+
+            </div>
+
+            <!-- Question Area -->
+            <div class="card-body flresult question-card p-4">
+                <p class="qst"></p>
+                <h3 id="qstn" style="display: inline;"></h3>
+                <h4 class="mb-4 question"  style="display: inline;">
+                    
+                    
+                </h4>
+
+                <div class="list-group">
+
+                    <label class="list-group-item p-3">
+                        <input class="form-check-input answer me-2" value="op1"  type="radio" name="answer" required>
+                        <p id="op1" class="adjust" style="display: inline;"></p>
+                    </label>
+
+                    <label class="list-group-item p-3">
+                        <input class="form-check-input answer me-2" value="op2"  type="radio" name="answer" required>
+                        <p id="op2" class="adjust" style="display: inline;"></p>
+                    </label>
+
+                    <label class="list-group-item p-3">
+                        <input class="form-check-input answer me-2" value="op3"  type="radio" name="answer" required>
+                        <p id="op3" class="adjust" style="display: inline;"></p>
+                    </label>
+
+                    <label class="list-group-item p-3">
+                        <input class="form-check-input answer me-2" value="op4"  type="radio" name="answer" required>
+                        <p id="op4" class="adjust" style="display: inline;"></p>
+                    </label>
+
+                </div>
+
+            </div>
+            <label class="list-group-item p-3">
+                <div style="text-align: center;"  width: 100%; id="user_result"></div>
+                <h2 class="qs"></h2>
+                
+            </label>
+            
+
+            <!-- Footer -->
+            <div class="card-footer bg-white p-3">
+
+                <div class="d-flex justify-content-between">
+
+
+                    <div>
+                        <button class="btn btn-warning me-2">
+                            Save & Next
+                        </button>
+
+                        <!-- <button class="btn btn-success">
+                            Submit Test
+                        </button> -->
+                    </div>
+
+                </div>
+
+            </div>
+            <div id="updateddata">
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Bootstrap JS -->
+<script src="script.js">
+
+</script>
+
+</body>
+</html>
