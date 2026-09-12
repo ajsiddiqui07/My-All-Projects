@@ -7,6 +7,7 @@ import Admin from './Components/Admin/Admin'
 import Landing_page from './Components/Landing_page/Landig_page'
 import User from './Components/User/User'
 import Navbar from './Components/Templates/Navbar'
+import AdminLogin from './Components/Admin/AdminLogin'
 
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
     <>
       <Navbar/>
       <Routes>
+        <Route path='/AdminLogin' element={<AdminLogin/>}></Route>
         <Route path='/admin' element={<Admin/>}></Route>
         <Route path='/' element={<Landing_page/>}></Route>
         <Route path='/user' element={<User/>}></Route>

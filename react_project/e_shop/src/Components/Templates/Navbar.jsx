@@ -100,8 +100,8 @@ function Navbar() {
               defaultValue=""
               onChange={(e) => {
 
-                if (e.target.value === "admin") {
-                  navigate("/admin");
+                if (e.target.value === "AdminLogin") {
+                  navigate("/AdminLogin");
                 }
 
                 if (e.target.value === "user") {
@@ -120,7 +120,7 @@ function Navbar() {
                 User
               </option>
 
-              <option value="admin">
+              <option value="AdminLogin">
                 Admin
               </option>
 
