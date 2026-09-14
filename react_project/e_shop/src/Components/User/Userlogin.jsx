@@ -1,54 +1,48 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { setCredentials } from "../../Features/authSlice";
+import { useNavigate, Link } from "react-router-dom";
+import { setCredentials } from "../../Features/authSlice"; // Path check kar lein
 
-function AdminLogin() {
+function UserLogin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
- 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
   const handleSubmit = async (e) => {
     e.preventDefault();
-      try {
-            const res = await axios.post("http://127.0.0.1:8000/api/auth/login/",{username:username,password:password})
-            const admin = res.data.tokens
+    try {
+      // Yahan user login ka endpoint aayega (Django REST framework ke mutabiq)
+      const res = await axios.post("http://127.0.0.1:8000/api/login/", { 
+        username: username, 
+        password: password 
+      });
+      const user = res.data;
 
-            console.log(admin.access);
-            
-            if(admin.access){
-              const response = await axios.get("http://127.0.0.1:8000/api/users/me/",{
-                headers: {
-                Authorization: `Bearer ${admin.access}`
-              }
-                
-              })
-              const admindetail = response.data
-              
-              dispatch(setCredentials({
-                accessToken:admin.access,
-                refreshToken:admin.refresh,
-                userdetail:admindetail,
-              }))
-              
-             navigate('/admin')
-            }
-            
-
-      } catch (error) {
-        console.log("STATUS:", error.response?.status);
-    console.log("DATA:", error.response?.data);
-    console.log("FULL ERROR:", error); 
+      if (user.access) {
+        const response = await axios.get("http://127.0.0.1:8000/api/users/me/", {
+          headers: {
+            Authorization: `Bearer ${user.access}`
+          }
+        });
+        const userdetail = response.data;
         
+        dispatch(setCredentials({
+          accessToken: user.access,
+          refreshToken: user.refresh,
+          userdetail: userdetail, // (Agar slice mein field ka naam admindetail hi hai)
+        }));
+        
+        // User logout hone par landing page par bhejna hai, toh login ke baad home/landing page par redirect karein
+        navigate('/'); 
       }
-
+    } catch (error) {
+      console.log("Login error:", error);
+    }
   };
 
-  
   return (
     <div className="min-h-screen bg-[#0d0f18] text-slate-100 font-sans flex items-center justify-center p-4">
       {/* Background ambient glow effect */}
@@ -59,13 +53,13 @@ function AdminLogin() {
         {/* Logo / Header Branding */}
         <div className="text-center mb-8">
           <div className="inline-flex w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-pink-500 items-center justify-center text-white font-bold text-xl shadow-xl shadow-purple-500/20 mb-4">
-            L
+            U
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-white">
-            LuxeMarket Admin
+            Welcome to LuxeMarket
           </h1>
           <p className="text-sm text-slate-400 mt-1">
-            Sign in to access your dashboard and control panel
+            Sign in to your account to continue shopping
           </p>
         </div>
 
@@ -81,7 +75,7 @@ function AdminLogin() {
                 <span className="text-slate-400 mr-3">👤</span>
                 <input
                   type="text"
-                  placeholder="admin@luxemarket.com"
+                  placeholder="yourname@example.com"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="bg-transparent outline-none w-full text-sm text-slate-200 placeholder-slate-500"
@@ -123,7 +117,7 @@ function AdminLogin() {
                   type="checkbox"
                   className="rounded bg-[#1a1e30] border-slate-700 text-purple-600 focus:ring-0 focus:ring-offset-0 w-4 h-4 cursor-pointer"
                 />
-                <span className="text-slate-400 text-xs">Remember this device</span>
+                <span className="text-slate-400 text-xs">Remember me</span>
               </label>
             </div>
 
@@ -132,18 +126,21 @@ function AdminLogin() {
               type="submit"
               className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium shadow-lg shadow-purple-600/25 hover:opacity-95 transition active:scale-[0.99]"
             >
-              Sign In to Dashboard
+              Sign In
             </button>
           </form>
         </div>
 
-        {/* Footer info */}
+        {/* Footer info / Register link */}
         <p className="text-center text-xs text-slate-500 mt-8">
-          Protected area • Authorized personnel only
+          Don't have an account?{" "}
+          <Link to="/userregister" className="text-purple-400 hover:underline">
+            Sign up
+          </Link>
         </p>
       </div>
     </div>
   );
 }
 
-export default AdminLogin;
+export default UserLogin;

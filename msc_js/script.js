@@ -101,154 +101,477 @@ const jsMCQ = [
   }
 ];
 
-let qsnum=0;
-let ansnum = 0;
-let opncounter=0;
+
+let qsnum = 0;
 let result = 0;
-
+let flqst = 0;
 let qst = 1;
-let flqst =0;
-document.querySelector("#qstn").innerText=`Q-No is:-${qst} `
-document.querySelector("#count").innerText=`${qst} `;
+
+// ========================================
+// USER ANSWERS STORE KARNE KE LIYE ARRAY
+// ========================================
+
+let userAnswers = [];
 
 
-let btn = document.querySelector(".btn")
+// ========================================
+// ELEMENTS
+// ========================================
+
+let btn = document.querySelector(".btn");
+let updata = document.querySelector("#updateddata");
+const userdata = document.querySelector("#userresult");
 
 
-   
-    
+// ========================================
+// QUESTION NUMBER
+// ========================================
+
+document.querySelector("#qstn").innerText = `Q-No is:-${qst}`;
+document.querySelector("#count").innerText = `${qst}`;
 
 
-function questionn(){
-    // let qsn = jsMCQ[qsnum].question
-    // document.querySelector(".question").innerText=qsn;
+// ========================================
+// SHOW QUESTION
+// ========================================
 
-    document.querySelector(".question").innerText=jsMCQ[qsnum].question;
+function questionn() {
 
-
+    document.querySelector(".question").innerText =
+        jsMCQ[qsnum].question;
 }
-let updata = document.querySelector("#updateddata")
 
-     
-function answer(){
-    let ans = jsMCQ[qsnum].answer
-    let userans = document.querySelectorAll(".answer")
-    for(let option of userans){
-      let opn = jsMCQ[qsnum].options
-      if(option.checked){
-          // console.log(option.nextElementSibling.innerText);
-          // console.log(ans);
-          flqst++;
-          if(option.nextElementSibling.innerText == ans){
-                        let div = document.createElement("div")
-                        div.innerHTML=`<div><label style="height:100px;" class="list-group-item p-3">
-                        <h4>${jsMCQ[qsnum].question}</h4>
-                        <p style="color:green;"> Your Ans is True:- <b >${ans}</b></p>
-                        </label></div>`
-                        div.style.border="1px solid lightgray";
-                        div.style.borderRadius="10px";
-                        updata.appendChild(div)
-            // console.log(option.nextElementSibling.innerText);
-            result++;
-          }else{
-                        let div = document.createElement("div")
-                        div.innerHTML=`<div><label style="height:150px;" class="list-group-item p-3">
-                        <h4>${jsMCQ[qsnum].question}</h4>
-                        <p style="color:red;"> Your Ans is false:- <b>${option.nextElementSibling.innerText}</b></p>
-                        <p style="color:green;"> Correct Ans is :- <b >${ans}</b></p>
-                        </label></div>`
-                        div.style.border="1px solid lightgray";
-                        div.style.borderRadius="10px";
-                        updata.appendChild(div)
-          }
-          
-              
-      }
-      if(option.checked){
-          option.checked=false;
-      }
+
+// ========================================
+// SHOW OPTIONS
+// ========================================
+
+function option() {
+
+    let opn = jsMCQ[qsnum].options;
+
+    document.querySelector("#op1").innerText = opn[0];
+    document.querySelector("#op2").innerText = opn[1];
+    document.querySelector("#op3").innerText = opn[2];
+    document.querySelector("#op4").innerText = opn[3];
+}
+
+
+// ========================================
+// SAVE USER ANSWER
+// ========================================
+
+function answer() {
+
+    let correctAnswer = jsMCQ[qsnum].answer;
+
+    let userOptions = document.querySelectorAll(".answer");
+
+    let selectedAnswer = null;
+
+    // Selected option find karo
+    for (let option of userOptions) {
+
+        if (option.checked) {
+
+            selectedAnswer =
+                option.nextElementSibling.innerText;
+
+            break;
+        }
     }
-          
+
+
+    // Agar user ne answer select nahi kiya
+    if (selectedAnswer === null) {
+
+        alert("Please select an answer!");
+
+        return false;
+    }
+
+
+    // Attempted question count
+    flqst++;
+
+
+    // Check correct answer
+    let isCorrect = selectedAnswer === correctAnswer;
+
+
+    if (isCorrect) {
+        result++;
+    }
+
+
+    // ========================================
+    // ANSWER ARRAY ME STORE KARO
+    // ========================================
+
+    userAnswers.push({
+
+        question: jsMCQ[qsnum].question,
+
+        userAnswer: selectedAnswer,
+
+        correctAnswer: correctAnswer,
+
+        isCorrect: isCorrect
+
+    });
+
+
+    // Radio button uncheck
+    for (let option of userOptions) {
+        option.checked = false;
+    }
+
+
+    return true;
 }
 
 
+// ========================================
+// FINAL RESULT
+// ========================================
+
+function finalresult() {
+
+    document.querySelector(".flresult").style.display = "none";
+    document.querySelector(".card-footer").style.display = "none";
+
+    let totalQuestions = jsMCQ.length;
+    let percentage = Math.round((result / totalQuestions) * 100);
+    let wrong = flqst - result;
+    let unattempted = totalQuestions - flqst;
 
 
+    // ========================================
+    // FINAL RESULT
+    // ========================================
+
+    document.querySelector("#user_result").innerHTML = `
+
+        <div class="container py-4">
+
+            <div class="card border-0 shadow-sm rounded-3">
+
+                <div class="card-body p-4 text-center">
+
+                    <h1 class="text-success fw-bold mb-2">
+                        Test Completed!
+                    </h1>
+
+                    <p class="text-muted mb-4">
+                        Great job! Your test has been completed.
+                    </p>
 
 
+                    <!-- SCORE -->
 
-function option(){
-    let opn = jsMCQ[qsnum].options
-    document.querySelector("#op1").innerHTML=opn[0];
-    document.querySelector("#op2").innerHTML=opn[1];
-    document.querySelector("#op3").innerHTML=opn[2];
-    document.querySelector("#op4").innerHTML=opn[3];
+                    <div class="bg-success text-white rounded-3 p-4 mb-4">
+
+                        <div class="small text-uppercase mb-1">
+                            Your Score
+                        </div>
+
+                        <div class="display-4 fw-bold">
+                            ${result}
+
+                            <span class="fs-4 fw-normal">
+                                / ${totalQuestions}
+                            </span>
+                        </div>
+
+                        <span class="badge bg-light text-success mt-2">
+                            ${percentage}% Score
+                        </span>
+
+                    </div>
+
+
+                    <!-- DETAILS -->
+
+                    <div class="row g-3">
+
+                        <div class="col-6 col-md-3">
+                            <div class="border rounded-3 p-3">
+                                <h4 class="text-primary fw-bold mb-1">
+                                    ${totalQuestions}
+                                </h4>
+
+                                <small class="text-muted">
+                                    Total
+                                </small>
+                            </div>
+                        </div>
+
+
+                        <div class="col-6 col-md-3">
+                            <div class="border rounded-3 p-3">
+                                <h4 class="text-success fw-bold mb-1">
+                                    ${result}
+                                </h4>
+
+                                <small class="text-muted">
+                                    Correct
+                                </small>
+                            </div>
+                        </div>
+
+
+                        <div class="col-6 col-md-3">
+                            <div class="border rounded-3 p-3">
+                                <h4 class="text-danger fw-bold mb-1">
+                                    ${wrong}
+                                </h4>
+
+                                <small class="text-muted">
+                                    Wrong
+                                </small>
+                            </div>
+                        </div>
+
+
+                        <div class="col-6 col-md-3">
+                            <div class="border rounded-3 p-3">
+                                <h4 class="text-warning fw-bold mb-1">
+                                    ${unattempted}
+                                </h4>
+
+                                <small class="text-muted">
+                                    Unattempted
+                                </small>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    `;
+
+
+    // ========================================
+    // ANSWER REVIEW
+    // ========================================
+
+    userdata.innerHTML = `
+
+        <div class="container pb-5">
+
+            <div class="card border-0 shadow-sm rounded-3">
+
+                <div class="card-body p-4">
+
+                    <h2 class="text-center fw-bold mb-4">
+                        Answer Review
+                    </h2>
+
+
+                    ${userAnswers.map((item, index) => {
+
+                        return `
+
+                            <div class="card mb-3 shadow-sm border">
+
+                                <div class="card-body p-3">
+
+                                    <h5 class="fw-bold mb-3">
+                                        Q${index + 1}. ${item.question}
+                                    </h5>
+
+
+                                    <p class="mb-2">
+                                        <strong>
+                                            Your Answer:
+                                        </strong>
+
+                                        <span class="${
+                                            item.isCorrect
+                                            ? 'text-success'
+                                            : 'text-danger'
+                                        }">
+
+                                            ${item.userAnswer}
+
+                                        </span>
+                                    </p>
+
+
+                                    <p class="mb-2 text-success">
+
+                                        <strong>
+                                            Correct Answer:
+                                        </strong>
+
+                                        ${item.correctAnswer}
+
+                                    </p>
+
+
+                                    <p class="mb-0">
+
+                                        <strong>
+                                            Result:
+                                        </strong>
+
+                                        ${
+                                            item.isCorrect
+
+                                            ? `<span class="text-success">
+                                                Correct ✓
+                                               </span>`
+
+                                            : `<span class="text-danger">
+                                                Wrong ✗
+                                               </span>`
+                                        }
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        `;
+
+                    }).join("")}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    document.querySelector(".qs").innerText =
+        `All Attempted Questions: ${flqst}`;
 }
 
 
+// ========================================
+// TIMER
+// ========================================
 
-function finalresult(){
-  let fl = document.querySelector(".flresult")
-  fl.style.display="none";
-  let user_result = document.querySelector("#user_result").innerHTML=`<h1>all correct answer is :${result}</h1>`;
-  document.querySelector(".qs").innerText=`all attempt Question is:-${flqst} `
-}
+let timer = document.querySelector("#timer");
 
-let timer = document.querySelector("#timer")
+let timeLeft = 1 * 60;
 
-let timeLeft = 1 * 60; // 30 minutes in seconds
+let intervel = setInterval(() => {
 
-    let intervel = setInterval(() => {
     let minutes = Math.floor(timeLeft / 60);
+
     let seconds = timeLeft % 60;
 
-        timer.innerText =
+
+    timer.innerText =
         `${minutes}:${seconds.toString().padStart(2, "0")}`;
+
 
     timeLeft--;
 
+
     if (timeLeft < 0) {
-      clearInterval(intervel);
-        timer.innerText="";
-       
-        
-        alert("Time's Out")
-        finalresult()
+
+        clearInterval(intervel);
+
+        timer.innerText = "";
+
+        alert("Time's Out!");
+
+        finalresult();
     }
+
 }, 1000);
 
-btn.addEventListener("click",()=>{
-        
-        answer();
 
-        qsnum++;
-        qst++;
-        document.querySelector("#count").innerText=`${qst} `;
-        document.querySelector("#qstn").innerText=`Q-No is:-${qst} `;
-        if(qsnum<=19){
-          questionn();
-          option();
-          progressbar();
-        }else{
-          clearInterval(intervel);
-          alert("all question complet")
-          finalresult()
-            
-        }
-        
-        
-    })
+// ========================================
+// NEXT BUTTON
+// ========================================
 
-function progressbar(){
+btn.addEventListener("click", () => {
 
-  let progres = (qst/jsMCQ.length)*100;
-  // console.log(progres);
-  document.querySelector(".progress-persent").innerText=`${progres}% Completed`
-  document.querySelector(".progress-bar").style.width =`${progres}%`;
 
-  
+    // Answer save karo
+    let saved = answer();
+
+
+    // Agar answer select nahi kiya
+    if (!saved) {
+        return;
+    }
+
+
+    // Next question
+    qsnum++;
+
+    qst++;
+
+
+    // ========================================
+    // CHECK QUESTIONS COMPLETE
+    // ========================================
+
+    if (qsnum < jsMCQ.length) {
+
+        document.querySelector("#count").innerText = `${qst}`;
+
+        document.querySelector("#qstn").innerText =
+            `Q-No is:-${qst}`;
+
+
+        questionn();
+
+        option();
+
+        progressbar();
+
+    }
+
+    else {
+
+        clearInterval(intervel);
+
+        alert("All Questions Completed!");
+
+        finalresult();
+
+    }
+
+});
+
+
+// ========================================
+// PROGRESS BAR
+// ========================================
+
+function progressbar() {
+
+    let progres =
+        (qst / jsMCQ.length) * 100;
+
+
+    document.querySelector(".progress-persent").innerText =
+        `${progres}% Completed`;
+
+
+    document.querySelector(".progress-bar").style.width =
+        `${progres}%`;
 }
-questionn();
-option();
-progressbar();
 
+
+// ========================================
+// INITIAL LOAD
+// ========================================
+
+questionn();
+
+option();
+
+progressbar();

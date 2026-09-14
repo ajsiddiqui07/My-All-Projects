@@ -1,6 +1,12 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../Features/authSlice";
 
 function Admin() {
+  const admindata = useSelector((state)=> state.auth.userdetail);
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
   const stats = [
     { title: "Total Sales", value: "₹2,84,500", change: "+12.5%", icon: "₹" },
     { title: "Total Orders", value: "1,248", change: "+8.2%", icon: "🛒" },
@@ -159,11 +165,15 @@ function Admin() {
               A
             </div>
             <div className="min-w-0">
-              <p className="font-medium text-white truncate">Admin User</p>
-              <p className="text-xs text-slate-400 truncate">admin@luxemarket.com</p>
+              <p className="font-medium text-white truncate">{admindata.username}</p>
+              <p className="text-xs text-slate-400 truncate">{admindata.email}</p>
             </div>
           </div>
-          <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition">
+          <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition" onClick={()=>{
+            dispatch(logout())
+
+            navigate('/adminlogin')
+          }}>
             <span>↪</span> Logout
           </button>
         </div>
