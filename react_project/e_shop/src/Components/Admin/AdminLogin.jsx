@@ -1,12 +1,22 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setCredentials } from "../../Features/authSlice";
+import { loginuser } from "../../Features/authSlice";
+
 
 function AdminLogin() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [logindata ,setLogindata]=useState({username:"",password:""})
+  const admininfo = useSelector((state)=> state.auth.user)
+  const adminerror = useSelector((state)=> state.auth.error)
+  
+  
+  const handlchange = (e)=>{
+
+    const {name ,value } = e.target;
+
+    setLogindata({...logindata,[name]:value})
+  }
 
  
 
@@ -14,47 +24,35 @@ function AdminLogin() {
   const dispatch = useDispatch()
   const handleSubmit = async (e) => {
     e.preventDefault();
-      try {
-            const res = await axios.post("http://127.0.0.1:8000/api/auth/login/",{username:username,password:password})
-            const admin = res.data.tokens
-
-            console.log(admin.access);
-            
-            if(admin.access){
-              const response = await axios.get("http://127.0.0.1:8000/api/users/me/",{
-                headers: {
-                Authorization: `Bearer ${admin.access}`
-              }
-                
-              })
-              const admindetail = response.data
-              
-              dispatch(setCredentials({
-                accessToken:admin.access,
-                refreshToken:admin.refresh,
-                userdetail:admindetail,
-              }))
-              
-             navigate('/admin')
-            }
-            
-
-      } catch (error) {
-        console.log("STATUS:", error.response?.status);
-    console.log("DATA:", error.response?.data);
-    console.log("FULL ERROR:", error); 
-        
-      }
-
+    
+    
+    dispatch(loginuser(logindata))
   };
 
+  useEffect(()=>{
+     if (admininfo) {
+      console.log(admininfo);
+      
+     navigate("/admin");
+  }
+
+  if (adminerror) {
+    console.log(adminerror);
+    
+      // console.log(adminerror.status);
+      // console.log(adminerror.data.message);
+      // console.log(adminerror.message);
+      // console.log(adminerror.fullerro.message);
+  }
+  },[admininfo,adminerror])
   
   return (
     <div className="min-h-screen bg-[#0d0f18] text-slate-100 font-sans flex items-center justify-center p-4">
       {/* Background ambient glow effect */}
+      
       <div className="absolute w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
       <div className="absolute w-96 h-96 bg-pink-600/10 rounded-full blur-3xl pointer-events-none translate-x-32 translate-y-32"></div>
-
+      
       <div className="w-full max-w-md relative z-10">
         {/* Logo / Header Branding */}
         <div className="text-center mb-8">
@@ -70,6 +68,9 @@ function AdminLogin() {
         </div>
 
         {/* Login Card */}
+        {
+        adminerror && adminerror.data.message
+      }
         <div className="bg-[#131625] border border-slate-800/80 rounded-3xl p-8 shadow-2xl backdrop-blur-xl">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Username Field */}
@@ -82,8 +83,9 @@ function AdminLogin() {
                 <input
                   type="text"
                   placeholder="admin@luxemarket.com"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  value={logindata.username}
+                  name="username"
+                  onChange={(e) => handlchange(e)}
                   className="bg-transparent outline-none w-full text-sm text-slate-200 placeholder-slate-500"
                   required
                 />
@@ -93,7 +95,7 @@ function AdminLogin() {
             {/* Password Field */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider" >
                   Password
                 </label>
                 <a
@@ -108,8 +110,9 @@ function AdminLogin() {
                 <input
                   type="password"
                   placeholder="••••••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={logindata.password}
+                  name="password"
+                  onChange={(e) => handlchange(e)}
                   className="bg-transparent outline-none w-full text-sm text-slate-200 placeholder-slate-500"
                   required
                 />

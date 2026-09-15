@@ -3,8 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../Features/authSlice";
 
+
 function Admin() {
-  const admindata = useSelector((state)=> state.auth.userdetail);
+  const admindata = useSelector((state)=> state.auth.user);
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const stats = [

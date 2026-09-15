@@ -60,7 +60,7 @@ export default function Landing_page() {
   const [wishlistCount, setWishlistCount] = useState(2);
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [cartOpen, setCartOpen] = useState(false);
+  const [artOpen, setCartOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
   // Countdown Timer State
@@ -225,7 +225,7 @@ export default function Landing_page() {
       <LimitedTime/>
 
       {/* Slide-out Cart Drawer */}
-      <cart/>
+      {/* <Cart/> */}
 
       {/* Footer */}
       <Footer/>

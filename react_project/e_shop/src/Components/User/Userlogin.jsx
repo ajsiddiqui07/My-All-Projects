@@ -2,45 +2,28 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
-import { setCredentials } from "../../Features/authSlice"; // Path check kar lein
+import { loginuser } from "../../Features/authSlice";
+
 
 function UserLogin() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const [logindata ,setLogindata]=useEffect({username:"",password:""})
+    
+    const handlchange = (e)=>{
+  
+      const {name ,value } = e.target;
+  
+      setLogindata({...logindata,[name]:value})
+    }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      // Yahan user login ka endpoint aayega (Django REST framework ke mutabiq)
-      const res = await axios.post("http://127.0.0.1:8000/api/login/", { 
-        username: username, 
-        password: password 
-      });
-      const user = res.data;
-
-      if (user.access) {
-        const response = await axios.get("http://127.0.0.1:8000/api/users/me/", {
-          headers: {
-            Authorization: `Bearer ${user.access}`
-          }
-        });
-        const userdetail = response.data;
-        
-        dispatch(setCredentials({
-          accessToken: user.access,
-          refreshToken: user.refresh,
-          userdetail: userdetail, // (Agar slice mein field ka naam admindetail hi hai)
-        }));
-        
-        // User logout hone par landing page par bhejna hai, toh login ke baad home/landing page par redirect karein
-        navigate('/'); 
-      }
-    } catch (error) {
-      console.log("Login error:", error);
-    }
+     dispatch(loginuser(logindata))
+    
   };
 
   return (
@@ -76,8 +59,8 @@ function UserLogin() {
                 <input
                   type="text"
                   placeholder="yourname@example.com"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  value={logindata.username}
+                  onChange={(e) => handlchange(e)}
                   className="bg-transparent outline-none w-full text-sm text-slate-200 placeholder-slate-500"
                   required
                 />
@@ -102,8 +85,8 @@ function UserLogin() {
                 <input
                   type="password"
                   placeholder="••••••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={logindata.password}
+                  onChange={(e) => handlchange(e)}
                   className="bg-transparent outline-none w-full text-sm text-slate-200 placeholder-slate-500"
                   required
                 />

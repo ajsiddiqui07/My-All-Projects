@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux"; // 1. useSelector import kiya
-import { logout } from "../../Features/authSlice"; // (Path apne project ke mutabiq check kar lein)
+import { logout } from "../../Features/authSlice";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
