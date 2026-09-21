@@ -9,8 +9,10 @@ export const loginuser = createAsyncThunk("loginuser", async (logindata,thunkAPI
     try {
         const res = await axios.post("http://127.0.0.1:8000/api/auth/login/",logindata)
         const admin = res.data.tokens.access
+        const token = res.data.tokens
         const refreshtoken =res.data.tokens.refresh
-        console.log(admin);
+        localStorage.setItem("tokens",JSON.stringify(token));
+        
 
         if (admin) {
             const response = await axios.get("http://127.0.0.1:8000/api/users/me/", {

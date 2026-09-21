@@ -1,5 +1,5 @@
 import axiosInstance from "axios";
-import store from "../store";
+import store from "../../Features/Store";
 
 axiosInstance.interceptors.request.use((config) => {
 

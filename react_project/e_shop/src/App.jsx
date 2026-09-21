@@ -23,7 +23,7 @@ function App() {
       <Navbar/>
       <Routes>
         <Route path='/AdminLogin' element={<AdminLogin/>}></Route>
-        <Route path='/admin' element={<Admin/>}></Route>
+        <Route path='/admin/*' element={<Admin/>}></Route>
         <Route path='/' element={<Landing_page/>}></Route>
         <Route path='/userlogin' element={<UserLogin/>}></Route>
         <Route path='/userregister' element={<UserRegister/>}></Route>
