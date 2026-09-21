@@ -1,9 +1,9 @@
-import axios from "axios";
+
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loginuser } from "../../Features/authSlice";
-
+import { toast } from "react-toastify";
 
 function AdminLogin() {
   const [logindata ,setLogindata]=useState({username:"",password:""})
@@ -32,12 +32,14 @@ function AdminLogin() {
   useEffect(()=>{
      if (admininfo) {
       console.log(admininfo);
+      toast.success("Logged in successfully!")
       
-     navigate("/admin");
+      navigate("/admin");
   }
 
   if (adminerror) {
     console.log(adminerror);
+    toast.error("Entr a Valid Username or password")
     
       // console.log(adminerror.status);
       // console.log(adminerror.data.message);
@@ -63,14 +65,11 @@ function AdminLogin() {
             LuxeMarket Admin
           </h1>
           <p className="text-sm text-slate-400 mt-1">
-            Sign in to access your dashboard and control panel
+           
           </p>
         </div>
 
         {/* Login Card */}
-        {
-        adminerror && adminerror.data.message
-      }
         <div className="bg-[#131625] border border-slate-800/80 rounded-3xl p-8 shadow-2xl backdrop-blur-xl">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Username Field */}

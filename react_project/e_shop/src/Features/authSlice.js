@@ -8,14 +8,14 @@ export const loginuser = createAsyncThunk("loginuser", async (logindata,thunkAPI
 
     try {
         const res = await axios.post("http://127.0.0.1:8000/api/auth/login/",logindata)
-        const admin = res.data.tokens
+        const admin = res.data.tokens.access
+        const refreshtoken =res.data.tokens.refresh
+        console.log(admin);
 
-        console.log(admin.access);
-
-        if (admin.access) {
+        if (admin) {
             const response = await axios.get("http://127.0.0.1:8000/api/users/me/", {
                 headers: {
-                    Authorization: `Bearer ${admin.access}`
+                    Authorization: `Bearer ${admin}`
                 }
 
             
@@ -24,7 +24,7 @@ export const loginuser = createAsyncThunk("loginuser", async (logindata,thunkAPI
             const admindetail = response.data
           
             
-            return {admindetail , admin};
+            return {admindetail , admin , refreshtoken};
             
 
             // navigate('/admin')
@@ -47,6 +47,7 @@ export const loginuser = createAsyncThunk("loginuser", async (logindata,thunkAPI
 const authSlice = createSlice({
     name: 'auth',
     initialState: {
+        rtoken:null,
         token: null,
         user:null,
         loading: null,
@@ -64,11 +65,12 @@ const authSlice = createSlice({
     extraReducers:(builder)=>{
         builder.addCase(loginuser.pending,(state)=>{
             state.loading=true;
-            state.error;
+            state.error=null;
         })
         .addCase(loginuser.fulfilled,(state,action)=>{
             state.loading=false;
             state.token=action.payload.admin;
+            state.rtoken=action.payload.refreshtoken;
             state.user=action.payload.admindetail;
            
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux"; // 1. useSelector import kiya
 import { logout } from "../../Features/authSlice";
 
@@ -12,19 +12,18 @@ function Navbar() {
   const [cartOpen, setCartOpen] = useState(false);
   const [totalCartCount, setTotalCartCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
-  // Profile dropdown ya menu ke liye local state (optional, agar logout option dena ho)
-  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+
+
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   // 2. Redux store se user/admin details nikal li
-  const userdetail = useSelector((state) => state.auth.userdetail);
-  const accessToken = useSelector((state) => state.auth.accessToken);
+  const userdetail = useSelector((state) => state.auth.user);
+  const accessToken = useSelector((state) => state.auth.token);
 
 
-  
+
 
 
   const toggleWishlist = () => {
@@ -33,7 +32,7 @@ function Navbar() {
 
   const handleLogout = () => {
     dispatch(logout());
-    setProfileDropdownOpen(false);
+
     navigate('/'); // Logout ke baad landing page par bhej diya
   };
 
@@ -41,7 +40,7 @@ function Navbar() {
     <nav className="fixed top-0 left-0 w-full z-40 bg-[#0f172a]/85 backdrop-blur-xl border-b border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          
+
           {/* LOGO */}
           <a href="/" className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 via-pink-500 to-blue-500 flex items-center justify-center text-white font-extrabold text-xl">
@@ -66,9 +65,10 @@ function Navbar() {
 
           {/* NAVIGATION */}
           <div className="hidden lg:flex items-center space-x-6 text-sm text-slate-300">
-            <a href="/" className="hover:text-purple-400">
+
+            <NavLink to={"/"} className="hover:text-purple-400">
               Home
-            </a>
+            </NavLink>
             <a href="#categories" className="hover:text-purple-400">
               Categories
             </a>
@@ -83,20 +83,33 @@ function Navbar() {
               // Agar user logged in hai (Token/Details present hain)
               <div className="relative">
                 <button
-                  onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                  onClick={() => {
+                    
+                    if (userdetail?.username === "admin") {
+
+                      navigate("/admin");
+                    } else {
+                      console.log(userdetail.username);
+                      navigate("/user");
+                    }
+                  }}
                   className="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-full border border-slate-700 transition"
                 >
                   <div className="w-7 h-7 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-xs">
-                    {/* Username ka pehla letter icon mein dikhayenge */}
-                    {userdetail?.username ? userdetail.username.charAt(0).toUpperCase() : <FontAwesomeIcon icon={faUser} />}
+                    {userdetail?.username ? (
+                      userdetail.username.charAt(0).toUpperCase()
+                    ) : (
+                      <FontAwesomeIcon icon={faUser} />
+                    )}
                   </div>
+
                   <span className="text-white text-xs font-medium max-w-[100px] truncate">
                     {userdetail?.username || "Account"}
                   </span>
                 </button>
 
                 {/* Dropdown Menu for Logged-in User */}
-                {profileDropdownOpen && (
+                {/* {profileDropdownOpen && (
                   // <div className="absolute right-0 mt-2 w-48 bg-slate-900 border border-slate-800 rounded-xl shadow-xl py-2 z-50">
                   //   <div className="px-4 py-2 border-b border-slate-800 text-xs text-slate-400 truncate">
                   //     Signed in as <br />
@@ -119,7 +132,7 @@ function Navbar() {
                   //   </button>
                   // </div>
                   <h1></h1>
-                )}
+                )} */}
               </div>
             ) : (
               // Agar logged out hai, toh purana Login Dropdown dikhega
@@ -130,7 +143,7 @@ function Navbar() {
                     navigate("/AdminLogin");
                   }
                   if (e.target.value === "user") {
-                    navigate("/user");
+                    navigate("/userlogin");
                   }
                 }}
                 className="bg-transparent text-slate-300 outline-none cursor-pointer"
@@ -188,9 +201,9 @@ function Navbar() {
           <a href="/" className="block text-white">Home</a>
           <a href="#categories" className="block text-white">Categories</a>
           <a href="#featured" className="block text-white">Featured</a>
-          
+
           {accessToken ? (
-            <button 
+            <button
               onClick={handleLogout}
               className="block text-red-400 font-semibold pt-2"
             >

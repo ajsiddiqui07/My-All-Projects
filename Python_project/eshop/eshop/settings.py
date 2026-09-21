@@ -41,13 +41,22 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
-    'myapp'
+    'myapp',
+    'drf_spectacular'
 ]
 
-REST_FRAMEWORK = {
+REST_FRAMEWORK = { 
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'E-Commerce API',
+    'DESCRIPTION': 'API documentation for E-Commerce Backend',
+    'VERSION': '1.0.0',
 }
 
 SIMPLE_JWT = {

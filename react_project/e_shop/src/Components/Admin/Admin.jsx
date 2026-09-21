@@ -2,6 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../Features/authSlice";
+import { toast } from "react-toastify";
 
 
 function Admin() {
@@ -172,7 +173,7 @@ function Admin() {
           </div>
           <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition" onClick={()=>{
             dispatch(logout())
-
+            toast.success("Logged out successfully!")
             navigate('/adminlogin')
           }}>
             <span>↪</span> Logout

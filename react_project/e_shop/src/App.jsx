@@ -9,7 +9,11 @@ import User from './Components/User/Userlogin'
 import Navbar from './Components/Templates/Navbar'
 import AdminLogin from './Components/Admin/AdminLogin'
 import UserRegister from './Components/User/Userregister'
-
+import UserLogin from './Components/User/Userlogin'
+import UserProfile from './Components/User/Userprofile'
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Categories from './Components/Categories/Categorise'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -21,9 +25,20 @@ function App() {
         <Route path='/AdminLogin' element={<AdminLogin/>}></Route>
         <Route path='/admin' element={<Admin/>}></Route>
         <Route path='/' element={<Landing_page/>}></Route>
-        <Route path='/user' element={<User/>}></Route>
+        <Route path='/userlogin' element={<UserLogin/>}></Route>
         <Route path='/userregister' element={<UserRegister/>}></Route>
+        <Route path='/user' element={<UserProfile/>}></Route>
+        <Route path='/category' element={<Categories/>}></Route>
       </Routes>
+      <ToastContainer  
+       position="top-center"
+       autoClose={1000}
+       hideProgressBar={false}
+       newestOnTop={true}
+       closeOnClick={true}
+       pauseOnHover
+       className="mt-50"
+      />
     </>
   )
 }

@@ -1,8 +1,11 @@
 import axios from "axios";
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { loginuser } from "../../Features/authSlice";
+import { toast } from "react-toastify";
+
+
 
 
 function UserLogin() {
@@ -11,7 +14,9 @@ function UserLogin() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [logindata ,setLogindata]=useEffect({username:"",password:""})
+  const [logindata ,setLogindata]=useState({username:"",password:""})
+  const userinfo = useSelector((state)=>state.auth.user)
+  const usererror = useSelector((state)=>state.auth.error)
     
     const handlchange = (e)=>{
   
@@ -23,8 +28,22 @@ function UserLogin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
      dispatch(loginuser(logindata))
-    
+     navigate('/user')
+     
   };
+
+  useEffect(()=>{
+      if (userinfo) {
+      toast.success("Logged in successfully!")
+     
+    }
+
+      if (usererror) {
+         toast.error("Entr a Valid Username or password")
+    }
+
+    
+  },[userinfo,usererror])
 
   return (
     <div className="min-h-screen bg-[#0d0f18] text-slate-100 font-sans flex items-center justify-center p-4">
@@ -60,6 +79,7 @@ function UserLogin() {
                   type="text"
                   placeholder="yourname@example.com"
                   value={logindata.username}
+                  name="username"
                   onChange={(e) => handlchange(e)}
                   className="bg-transparent outline-none w-full text-sm text-slate-200 placeholder-slate-500"
                   required
@@ -85,6 +105,7 @@ function UserLogin() {
                 <input
                   type="password"
                   placeholder="••••••••••••"
+                  name="password"
                   value={logindata.password}
                   onChange={(e) => handlchange(e)}
                   className="bg-transparent outline-none w-full text-sm text-slate-200 placeholder-slate-500"
