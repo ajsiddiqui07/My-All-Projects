@@ -7,6 +7,7 @@ import Adminsidebar from "../Templates/Adminsidebar";
 import Admindashbord from "./Admindashbord";
 import Categories from "../Categories/Categorise";
 import CreateCategory from "../Categories/Createcategories";
+import EditCategories from "../Categories/Editcategories";
 
 
 function Admin() {
@@ -26,6 +27,7 @@ function Admin() {
           <Route path="/" element={<Admindashbord />}></Route>
           <Route path="/category" element={<Categories />}></Route>
           <Route path="/createcategory" element={<CreateCategory/>}></Route>
+          <Route path="/editcategories/:id" element={<EditCategories/>}></Route>
 
         </Routes>
       </div>

@@ -2,22 +2,17 @@ import React, { useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
-import {  getcategories } from "../../Features/CategorySlice";
+import {  Deletecategories, getcategories } from "../../Features/CategorySlice";
 import { toast } from "react-toastify";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 function Categories() {
 
 const {catArray,catMsg,catError} = useSelector((state)=>state.categories)
 const dispatch = useDispatch()
+const navigate = useNavigate()
 // console.log(catArray);
 
 
-useEffect(()=>{
-  dispatch(getcategories())
-  catMsg && toast.success("category loaded Successfully")
-  catError && toast.error(catError)
-  
-},[catMsg,catError])
   // Dummy Static Data
   const categories = [
     {
@@ -47,13 +42,21 @@ useEffect(()=>{
   ];
 
   const handleEdit = (id) => {
-    console.log("Edit Category:", id);
+    
+    navigate(`/admin/editcategories/${id}`)
   };
 
   const handleDelete = (id) => {
     console.log("Delete Category:", id);
+    dispatch(Deletecategories(id))
+   
   };
 
+  useEffect(()=>{
+    dispatch(getcategories())
+    catMsg && toast.success(catMsg)
+    catError && toast.error(catError)
+  },[catMsg,catError])
   return (
     <section className="min-h-screen bg-slate-950 p-6">
 

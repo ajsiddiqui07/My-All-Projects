@@ -1,20 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { CreateCategories } from "../../Features/CategorySlice";
+import { CreateCategories, Editcategories, Updatecategories } from "../../Features/CategorySlice";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-function CreateCategory() {
+function EditCategories() {
 
     const dispatch = useDispatch();
     const navgate = useNavigate()
-    const {catArray,catMsg,catError,catLeader} = useSelector((state)=>state.categories)
+    const {catArray,catMsg,catError,catLeader,singledata} = useSelector((state)=>state.categories)
     const [categoryData, setCategoryData] = useState({
         name: "",
         description: ""
     });
 
+    useEffect(()=>{
+        singledata && setCategoryData({
+            name: singledata.name,
+            description: singledata.description
+        });
+        
+        
+    },[singledata])
+    
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -23,11 +32,19 @@ function CreateCategory() {
             ...categoryData,
             [name]: value
         });
+    
+
     };
+    const id = useParams().id
+        
+
+        useEffect(()=>{
+            dispatch(Editcategories(id))
+        },[id])
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        dispatch(CreateCategories(categoryData))
+        dispatch(Updatecategories({id:id,data:categoryData}))
         console.log(catArray,catLeader,catMsg,catError);
         
         catLeader && toast.success(catLeader)
@@ -208,22 +225,7 @@ function CreateCategory() {
                 </div>
 
 
-                {/* Error */}
-                {/* {error && (
-                    <div className="mt-7 flex items-center rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
-                        <span className="mr-2">⚠</span>
-                        {error}
-                    </div>
-                )} */}
-
-
-                {/* Success */}
-                {/* {success && (
-                    <div className="mt-7 flex items-center rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400">
-                        <span className="mr-2">✓</span>
-                        {success}
-                    </div>
-                )} */}
+               
 
 
                 {/* Bottom Actions */}
@@ -300,4 +302,4 @@ function CreateCategory() {
 );
 }
 
-export default CreateCategory;
+export default EditCategories;

@@ -36,6 +36,8 @@ function Navbar() {
     navigate('/'); // Logout ke baad landing page par bhej diya
   };
 
+  
+
   return (
     <nav className="fixed top-0 left-0 w-full z-40 bg-[#0f172a]/85 backdrop-blur-xl border-b border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
