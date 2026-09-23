@@ -1,190 +1,288 @@
-import React, { useState } from "react";
+
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteproduct, getproduct } from "../../Features/ProductSlice";
+import { getcategories } from "../../Features/CategorySlice";
+import { NavLink } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Products() {
 
-  const [activeCategory, setActiveCategory] = useState("all");
+    const dispatch = useDispatch();
 
-  // Dummy Static Product Data
-  const products = [
-    {
-      id: 1,
-      name: "Vision Pro Headphones",
-      category: "electronics",
-      price: 299,
-      originalPrice: 399,
-      rating: 4.8,
-      badge: "Best Seller",
-      description: "Premium wireless headphones with spatial audio.",
-      image:
-        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-      id: 2,
-      name: "Urban Premium Jacket",
-      category: "fashion",
-      price: 149,
-      originalPrice: 199,
-      rating: 4.7,
-      badge: "Trending",
-      description: "Modern luxury jacket for everyday streetwear.",
-      image:
-        "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-      id: 3,
-      name: "Smart Watch X",
-      category: "electronics",
-      price: 249,
-      originalPrice: 329,
-      rating: 4.9,
-      badge: "Popular",
-      description: "Advanced smartwatch with health and fitness tracking.",
-      image:
-        "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-      id: 4,
-      name: "Minimal Desk Lamp",
-      category: "lifestyle",
-      price: 89,
-      originalPrice: 119,
-      rating: 4.6,
-      badge: "New",
-      description: "Elegant ambient lighting for your workspace.",
-      image:
-        "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=600&q=80"
-    }
-  ];
+    const { productArray, productLoader, productError,productMsg} = useSelector(
+        (state) => state.products
+    );
+    const {catArray}=useSelector((state)=>state.categories)
+    
+    useEffect(() => {
+        console.log(productArray);
+        console.log(catArray);
+        
+    }, [productArray,catArray]);
 
-  const filteredProducts =
-    activeCategory === "all"
-      ? products
-      : products.filter(
-          (product) => product.category === activeCategory
+    useEffect(()=>{
+        productMsg && toast.success(productMsg)
+        dispatch(getproduct());
+    },[productMsg])
+    
+    useEffect(() => {
+        dispatch(getproduct());
+        dispatch(getcategories())
+    }, [dispatch]);
+
+    if (productLoader) {
+        return (
+            <div className="text-center text-white py-10">
+                Loading products...
+            </div>
         );
+    }
 
-  return (
-    <section id="featured" className="py-24 relative">
+    if (productError) {
+        return (
+            <div className="text-center text-red-400 py-10">
+                {productError}
+            </div>
+        );
+    }
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    return (
+        <div className="p-6">
 
-        <div className="text-center max-w-3xl mx-auto mb-12">
-
-          <h2 className="text-xs font-bold uppercase tracking-widest text-purple-400">
-            Exclusive Inventory
-          </h2>
-
-          <p className="text-3xl sm:text-5xl font-extrabold text-white mt-2">
-            Top Featured Products
-          </p>
-
-          {/* Category Filter */}
-
-          <div className="flex flex-wrap justify-center gap-2 mt-8 p-1.5 bg-slate-800/70 backdrop-blur-md rounded-2xl max-w-fit mx-auto border border-slate-800">
-
-            {["all", "electronics", "fashion", "lifestyle"].map(
-              (category) => (
-
-                <button
-                  key={category}
-                  onClick={() => setActiveCategory(category)}
-                  className={`px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold capitalize transition-all ${
-                    activeCategory === category
-                      ? "bg-purple-600 text-white shadow-lg"
-                      : "text-slate-400 hover:text-white"
-                  }`}
-                >
-                  {category}
-                </button>
-
-              )
-            )}
-
-          </div>
-
-        </div>
-
-        {/* Product Grid */}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-
-          {filteredProducts.map((product) => (
-
-            <div
-              key={product.id}
-              className="bg-slate-800/50 backdrop-blur-md rounded-3xl p-4 border border-slate-700/60 hover:border-purple-500/50 transition-all hover:-translate-y-1.5 shadow-xl flex flex-col justify-between group"
-            >
-
-              <div>
-
-                <div className="relative rounded-2xl overflow-hidden mb-4 h-52 bg-slate-900">
-
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-
-                  <span className="absolute top-3 left-3 bg-purple-600/90 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">
-                    {product.badge}
-                  </span>
-
-                </div>
-
-                <div className="flex items-center justify-between text-xs text-amber-400 mb-1">
-
-                  <span>
-                    ⭐ {product.rating}
-                  </span>
-
-                  <span className="text-slate-400 uppercase font-semibold text-[10px]">
-                    {product.category}
-                  </span>
-
-                </div>
-
-                <h3 className="font-bold text-base text-white">
-                  {product.name}
-                </h3>
-
-                <p className="text-slate-400 text-xs mt-1">
-                  {product.description}
-                </p>
-
-              </div>
-
-              <div className="mt-5 pt-3 border-t border-slate-700/50 flex items-center justify-between">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-6">
 
                 <div>
+                    <h1 className="text-2xl font-bold text-white">
+                        Products
+                    </h1>
 
-                  <span className="text-xl font-extrabold text-white">
-                    ${product.price}
-                  </span>
-
-                  <span className="text-xs text-slate-500 line-through ml-2">
-                    ${product.originalPrice}
-                  </span>
-
+                    <p className="text-slate-400 text-sm mt-1">
+                        Manage all your products
+                    </p>
                 </div>
 
-                <button
-                  className="p-3 bg-purple-600 hover:bg-purple-500 text-white rounded-xl shadow-lg shadow-purple-600/20 transition-all"
+                <NavLink
+                    to={"/admin/createproduct/"}
+                    className="px-5 py-2.5 rounded-xl 
+                    bg-gradient-to-r from-purple-600 to-pink-600
+                    text-white font-semibold
+                    hover:opacity-90 transition"
                 >
-                  <i className="fa-solid fa-cart-plus"></i>
-                </button>
-
-              </div>
+                    + Add Product
+                </NavLink>
 
             </div>
 
-          ))}
+            {/* No Products */}
+            {productArray?.length === 0 ? (
+
+                <div className="text-center text-slate-400 py-10">
+                    No products found
+                </div>
+
+            ) : (
+
+                /* Table */
+                <div className="overflow-x-auto rounded-2xl border border-slate-700">
+
+                    <table className="w-full text-left">
+
+                        {/* Table Header */}
+                        <thead className="bg-slate-800">
+
+                            <tr>
+
+                                <th className="px-6 py-4 text-sm font-semibold text-slate-300">
+                                    #
+                                </th>
+
+                                <th className="px-6 py-4 text-sm font-semibold text-slate-300">
+                                    Product
+                                </th>
+
+                                <th className="px-6 py-4 text-sm font-semibold text-slate-300">
+                                    Description
+                                </th>
+
+                                <th className="px-6 py-4 text-sm font-semibold text-slate-300">
+                                    Price
+                                </th>
+
+                                <th className="px-6 py-4 text-sm font-semibold text-slate-300">
+                                    Stock
+                                </th>
+
+                                <th className="px-6 py-4 text-sm font-semibold text-slate-300">
+                                    Category
+                                </th>
+
+                                <th className="px-6 py-4 text-sm font-semibold text-slate-300 text-center">
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        {/* Table Body */}
+                        <tbody className="bg-slate-900 divide-y divide-slate-800">
+
+                            {productArray?.map((product, index) => (
+
+                                <tr
+                                    key={product.id}
+                                    className="hover:bg-slate-800/70 transition"
+                                >
+
+                                    {/* ID */}
+                                    <td className="px-6 py-4 text-slate-400">
+                                        {index + 1}
+                                    </td>
+
+                                    {/* Product */}
+                                    <td className="px-6 py-4">
+
+                                        <div className="flex items-center gap-3">
+
+                                            {/* Image */}
+                                            <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-800 flex-shrink-0">
+
+                                                {product.image ? (
+
+                                                    <img
+                                                        src={product.image}
+                                                        alt={product.name}
+                                                        className="w-full h-full object-cover"
+                                                    />
+
+                                                ) : (
+
+                                                    <div className="w-full h-full flex items-center justify-center text-xs text-slate-500">
+                                                        No Image
+                                                    </div>
+
+                                                )}
+
+                                            </div>
+
+                                            {/* Name */}
+                                            <div>
+
+                                                <p className="text-white font-semibold">
+                                                    {product.name}
+                                                </p>
+
+                                                
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+                                    {/* Description */}
+                                    <td className="px-6 py-4 max-w-xs">
+
+                                        <p className="text-sm text-slate-400 line-clamp-2">
+                                            {product.description}
+                                        </p>
+
+                                    </td>
+
+                                    {/* Price */}
+                                    <td className="px-6 py-4">
+
+                                        <span className="text-purple-400 font-semibold">
+                                            ₹{product.price}
+                                        </span>
+
+                                    </td>
+
+                                    {/* Stock */}
+                                    <td className="px-6 py-4">
+
+                                        <span
+                                            className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                                product.stock > 0
+                                                    ? "bg-green-500/10 text-green-400"
+                                                    : "bg-red-500/10 text-red-400"
+                                            }`}
+                                        >
+                                            {product.stock > 0
+                                                ? `${product.stock} Available`
+                                                : "Out of Stock"}
+                                        </span>
+
+                                    </td>
+
+                                    {/* Category */}
+                                    <td className="px-6 py-4">
+
+                                       <p className="text-xs text-slate-500">
+                                                    {catArray.find((cat)=>cat.id == product.category)?.name}
+                                        </p>
+
+                                    </td>
+
+                                    {/* Actions */}
+                                    <td className="px-6 py-4">
+
+                                        <div className="flex justify-center gap-2">
+
+                                            <button
+                                                className="px-3 py-1.5 rounded-lg
+                                                bg-blue-500/10
+                                                text-blue-400
+                                                hover:bg-blue-500/20
+                                                transition"
+                                            >
+                                                View
+                                            </button>
+
+                                            <button
+                                                className="px-3 py-1.5 rounded-lg
+                                                bg-yellow-500/10
+                                                text-yellow-400
+                                                hover:bg-yellow-500/20
+                                                transition"
+                                            >
+                                                Edit
+                                            </button>
+
+                                            <button
+                                                onClick={()=>{
+                                                    dispatch(deleteproduct(product.id))
+                                                }}
+                                                className="px-3 py-1.5 rounded-lg
+                                                bg-red-500/10
+                                                text-red-400
+                                                hover:bg-red-500/20
+                                                transition"
+                                            >
+                                                Delete
+                                            </button>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            ))}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            )}
 
         </div>
-
-      </div>
-
-    </section>
-  );
+    );
 }
 
 export default Products;
+

@@ -43,9 +43,9 @@ const navigate = useNavigate()
               <NavLink to={"/admin"} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium shadow-lg shadow-purple-600/20">
                 <span>▦</span> Dashboard
               </NavLink>
-              <button className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition">
+              <NavLink to={"/admin/products"} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition">
                 <span>📦</span> Products
-              </button>
+              </NavLink>
               <button className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition">
                 <span>🛒</span> Orders
               </button>

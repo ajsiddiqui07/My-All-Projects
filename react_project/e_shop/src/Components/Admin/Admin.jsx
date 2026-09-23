@@ -8,6 +8,8 @@ import Admindashbord from "./Admindashbord";
 import Categories from "../Categories/Categorise";
 import CreateCategory from "../Categories/Createcategories";
 import EditCategories from "../Categories/Editcategories";
+import Products from "../Product/Products";
+import CreateProduct from "../Product/Createproduct";
 
 
 function Admin() {
@@ -28,6 +30,9 @@ function Admin() {
           <Route path="/category" element={<Categories />}></Route>
           <Route path="/createcategory" element={<CreateCategory/>}></Route>
           <Route path="/editcategories/:id" element={<EditCategories/>}></Route>
+          <Route path="/products" element={<Products/>}></Route>
+          <Route path="/createproduct" element={<CreateProduct/>}></Route>
+
 
         </Routes>
       </div>
