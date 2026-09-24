@@ -50,6 +50,38 @@ export const deleteproduct=createAsyncThunk('deleteproduct',async(id,proError)=>
     }
 })
 
+export const editproduct = createAsyncThunk('editproduct',async(id,proEror)=>{
+    try {
+        const res = await axios.get(`http://127.0.0.1:8000/api/products/${id}/`,{
+            headers:{
+                Authorization:`Bearer ${token.access}`
+            }
+        })
+
+        return res.data
+    } catch (error) {
+        console.log(error);
+        return proEror.rejectWithValue(error.message)
+        
+    }
+})
+
+export const updateproduct = createAsyncThunk('updateproduct',async({id,data},proError)=>{
+    try {
+        const res = await axios.patch(`http://127.0.0.1:8000/api/products/${id}/`,data,{
+            headers:{
+                Authorization:`Bearer ${token.access}`
+            }
+        })
+        
+        
+    } catch (error) {
+        console.log(error);
+        return proError.rejectWithValue(error.message)
+        
+    }
+})
+
 const Productslice = createSlice({
     name:'product',
     initialState:{
@@ -99,6 +131,34 @@ const Productslice = createSlice({
             
         })
         .addCase(deleteproduct.rejected,(state,action)=>{
+            state.productLoader=null;
+            state.productError=action.payload;
+        })
+        .addCase(editproduct.pending,(state,action)=>{
+            state.productLoader="Loading";
+            state.productMsg=null;
+        })
+        .addCase(editproduct.fulfilled,(state,action)=>{
+            state.productLoader=null;
+            state.singledata=action.payload
+           
+            
+        })
+        .addCase(editproduct.rejected,(state,action)=>{
+            state.productLoader=null;
+            state.productError=action.payload;
+        })
+        .addCase(updateproduct.pending,(state,action)=>{
+            state.productLoader="Loading";
+            state.productMsg=null;
+        })
+        .addCase(updateproduct.fulfilled,(state,action)=>{
+            state.productLoader=null;
+            state.productMsg="Product Updated";
+           
+            
+        })
+        .addCase(updateproduct.rejected,(state,action)=>{
             state.productLoader=null;
             state.productError=action.payload;
         })

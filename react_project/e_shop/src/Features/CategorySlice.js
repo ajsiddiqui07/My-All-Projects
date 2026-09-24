@@ -45,7 +45,7 @@ export const CreateCategories = createAsyncThunk('CreateCategories',async(data,r
 export const Deletecategories = createAsyncThunk("Deletecategories",async(id,APIError)=>{
     try {
         
-        const res = await axios.delete("http://127.0.0.1:8000/api/categories/"+id,{
+        const res = await axios.delete(`http://127.0.0.1:8000/api/categories/${id}/`,{
             headers:{
                 Authorization:`Bearer ${token.access}`
             }
@@ -53,8 +53,8 @@ export const Deletecategories = createAsyncThunk("Deletecategories",async(id,API
 
         return id
     } catch (error) {
-        console.log(error);
-        return APIError.rejectWithValue(error.response?.data || error.message)
+        console.log(error.response?.data);
+        return APIError.rejectWithValue(error.message)
         
     }
 })
@@ -65,7 +65,7 @@ export const Editcategories = createAsyncThunk("Editcategories",async(id,APIErro
     
     try {
         
-        const res = await axios.get("http://127.0.0.1:8000/api/categories/"+id,{
+        const res = await axios.get(`http://127.0.0.1:8000/api/categories/${id}/`,{
             headers:{
                 Authorization:`Bearer ${token.access}`
             }
@@ -75,7 +75,7 @@ export const Editcategories = createAsyncThunk("Editcategories",async(id,APIErro
       
         return catdata
     } catch (error) {
-        console.log(error);
+        console.log(error.response?.data);
         return APIError.rejectWithValue(error.response?.data || error.message)
         
     }
@@ -85,7 +85,7 @@ export const Editcategories = createAsyncThunk("Editcategories",async(id,APIErro
 export const Updatecategories = createAsyncThunk('Updatecategories',async({id,data},APIError)=>{
        
     try {
-         const res = await axios.patch("http://127.0.0.1:8000/api/categories/"+id,data,{
+         const res = await axios.patch(`http://127.0.0.1:8000/api/categories/${id}/`,data,{
             headers:{
                 Authorization : `Bearer ${token.access}`
             }
@@ -97,7 +97,7 @@ export const Updatecategories = createAsyncThunk('Updatecategories',async({id,da
          
 
     } catch (error) {
-        console.log("UPDATE ERROR:", error);
+       console.log(error.response?.data);
 
             return APIError.rejectWithValue(
                 error.response?.data || error.message

@@ -10,6 +10,8 @@ import CreateCategory from "../Categories/Createcategories";
 import EditCategories from "../Categories/Editcategories";
 import Products from "../Product/Products";
 import CreateProduct from "../Product/Createproduct";
+import EditProduct from "../Product/EditProduct";
+import Userslist from "./userlist";
 
 
 function Admin() {
@@ -32,6 +34,8 @@ function Admin() {
           <Route path="/editcategories/:id" element={<EditCategories/>}></Route>
           <Route path="/products" element={<Products/>}></Route>
           <Route path="/createproduct" element={<CreateProduct/>}></Route>
+          <Route path="/editproduct/:id" element={<EditProduct/>}></Route>
+          <Route path="/userlist" element={<Userslist/>}></Route>
 
 
         </Routes>

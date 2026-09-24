@@ -52,9 +52,9 @@ const navigate = useNavigate()
               <NavLink to={"/admin/category/"} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition">
                 <span>🏷️</span> Categories
               </NavLink>
-              <button className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition">
+              <NavLink to={'/admin/userlist'} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition">
                 <span>👥</span> Customers
-              </button>
+              </NavLink>
             </div>
           </div>
 

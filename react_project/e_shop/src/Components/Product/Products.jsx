@@ -3,12 +3,13 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteproduct, getproduct } from "../../Features/ProductSlice";
 import { getcategories } from "../../Features/CategorySlice";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 function Products() {
 
     const dispatch = useDispatch();
+    const navigate = useNavigate()
 
     const { productArray, productLoader, productError,productMsg} = useSelector(
         (state) => state.products
@@ -221,7 +222,7 @@ function Products() {
                                     <td className="px-6 py-4">
 
                                        <p className="text-xs text-slate-500">
-                                                    {catArray.find((cat)=>cat.id == product.category)?.name}
+                                                    {catArray && catArray.find((cat)=>cat.id == product.category)?.name}
                                         </p>
 
                                     </td>
@@ -231,17 +232,12 @@ function Products() {
 
                                         <div className="flex justify-center gap-2">
 
-                                            <button
-                                                className="px-3 py-1.5 rounded-lg
-                                                bg-blue-500/10
-                                                text-blue-400
-                                                hover:bg-blue-500/20
-                                                transition"
-                                            >
-                                                View
-                                            </button>
+                                           
 
                                             <button
+                                                onClick={()=>{
+                                                    navigate(`/admin/editproduct/${product.id}`)
+                                                }}
                                                 className="px-3 py-1.5 rounded-lg
                                                 bg-yellow-500/10
                                                 text-yellow-400
