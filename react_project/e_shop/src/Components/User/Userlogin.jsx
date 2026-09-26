@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, NavLink } from "react-router-dom";
 import { loginuser } from "../../Features/authSlice";
 import { toast } from "react-toastify";
 
@@ -138,9 +138,9 @@ function UserLogin() {
         {/* Footer info / Register link */}
         <p className="text-center text-xs text-slate-500 mt-8">
           Don't have an account?{" "}
-          <Link to="/userregister" className="text-purple-400 hover:underline">
+          <NavLink to={'/userregister'} className="text-purple-400 hover:underline">
             Sign up
-          </Link>
+          </NavLink>
         </p>
       </div>
     </div>

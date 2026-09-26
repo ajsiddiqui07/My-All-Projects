@@ -1,7 +1,7 @@
 
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getuserlist } from "../../Features/AdminSlice";
+import { deleteuser,  getuserlist } from "../../Features/AdminSlice";
 import { toast } from "react-toastify";
 
 function Userslist() {
@@ -17,43 +17,18 @@ function Userslist() {
        dispatch(getuserlist())
     },[dispatch])
 
-    const {userlist ,} = useSelector((state)=>state.admin)
+    const {userlist , adminMsg , adminError} = useSelector((state)=>state.admin)
+
+    useEffect(()=>{
+
+        adminMsg && toast.success(adminMsg)
+        adminError && toast.error(adminError)
+        dispatch(getuserlist())
+    },[adminMsg,adminError])
 
     
-    const users = [
-        {
-            id: 1,
-            username: "arbaz",
-            email: "arbaz@gmail.com",
-            role: "User",
-            status: "Active",
-            joined: "24 Sep 2026",
-        },
-        {
-            id: 2,
-            username: "rahul",
-            email: "rahul@gmail.com",
-            role: "User",
-            status: "Active",
-            joined: "23 Sep 2026",
-        },
-        {
-            id: 3,
-            username: "john",
-            email: "john@gmail.com",
-            role: "User",
-            status: "Inactive",
-            joined: "20 Sep 2026",
-        },
-        {
-            id: 4,
-            username: "admin",
-            email: "admin@gmail.com",
-            role: "Admin",
-            status: "Active",
-            joined: "15 Sep 2026",
-        },
-    ];
+   
+          
 
     const totalUsers = userlist && userlist.length;
 
@@ -353,6 +328,13 @@ function Userslist() {
                                             </button>
 
                                             <button
+                                                onClick={()=>{
+                                                   const disizan =  confirm('Are you sure you want to delete this user?')
+                                                   if(disizan){
+                                                     dispatch(deleteuser(user.id))
+                                                   }
+                                                   
+                                                }}
                                                 className="px-3 py-1.5 rounded-lg
                                                 bg-red-500/10
                                                 text-red-400

@@ -28,6 +28,34 @@ export const getuserlist = createAsyncThunk(
         }
     }
 );
+export const deleteuser = createAsyncThunk(
+    "deleteuser",
+    async (id, { rejectWithValue }) => {
+        
+
+        try {
+
+            const res = await axios.delete(
+                `http://127.0.0.1:8000/api/users/${id}/`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token.access}`
+                    }
+                }
+            );
+
+            console.log("userlist", res.data);
+
+            return res.data;
+
+        } catch (error) {
+            console.log(error.response.data);
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+
 const AdminSlice = createSlice({
     name:'admin',
     initialState:{
@@ -52,6 +80,17 @@ const AdminSlice = createSlice({
         })
         .addCase(getuserlist.rejected,(state,action)=>{
             state.adminloader=null;
+            state.adminError=action.payload
+        })
+        .addCase(deleteuser.pending,(state,action)=>{
+           
+            state.adminMsg=null;
+        })
+        .addCase(deleteuser.fulfilled,(state,action)=>{
+            state.adminMsg="User Deleted";
+            
+        })
+        .addCase(deleteuser.rejected,(state,action)=>{
             state.adminError=action.payload
         })
     }

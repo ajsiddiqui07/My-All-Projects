@@ -1,36 +1,45 @@
 import axios from "axios";
-import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, Link, NavLink } from "react-router-dom";
+import { Registeruser } from "../../Features/UserRegisterSlice";
+import { toast } from "react-toastify";
+
 
 function UserRegister() {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [password, setPassword] = useState("");
-
   const navigate = useNavigate();
+
+
+
+  const dispatch = useDispatch()
+  const { Msg, registerDetail, error } = useSelector((state) => state.user)
+  const [ userdata, setUserdata ] = useState({
+      username: '',
+      email: '',
+      firstName: '',
+      lastName: '',
+      password: '',
+    })
+  const handlechange = (e) => {
+    const { name, value } = e.target
+
+    setUserdata({ ...userdata, [name]: value })
+
+  }
+  useEffect(() => {
+    Msg && toast.success(Msg) 
+    error && toast.error(error)
+    console.log(registerDetail);
+    
+    
+    
+  }, [Msg, error])
+
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    try {
-      // Django registration endpoint
-      const response = await axios.post("http://127.0.0.1:8000/api/register/", {
-        username: username,
-        email: email,
-        first_name: firstName,
-        last_name: lastName,
-        password: password,
-      });
-
-      console.log("Registration Successful:", response.data);
-      
-      // Registration ke baad user ko login page par redirect kar dein
-      navigate("/user");
-      
-    } catch (error) {
-      console.log("Registration error:", error.response?.data || error.message);
-    }
+    dispatch(Registeruser(userdata))
+   navigate('/userlogin')
   };
 
   return (
@@ -56,7 +65,7 @@ function UserRegister() {
         {/* Register Card */}
         <div className="bg-[#131625] border border-slate-800/80 rounded-3xl p-8 shadow-2xl backdrop-blur-xl">
           <form onSubmit={handleRegister} className="space-y-4">
-            
+
             {/* Username Field (Mandatory) */}
             <div>
               <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
@@ -67,8 +76,9 @@ function UserRegister() {
                 <input
                   type="text"
                   placeholder="johndoe"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  name="username"
+                  value={userdata.username}
+                  onChange={handlechange}
                   className="bg-transparent outline-none w-full text-sm text-slate-200 placeholder-slate-500"
                   required
                 />
@@ -85,8 +95,9 @@ function UserRegister() {
                 <input
                   type="email"
                   placeholder="john@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={userdata.email}
+                  name="email"
+                  onChange={handlechange}
                   className="bg-transparent outline-none w-full text-sm text-slate-200 placeholder-slate-500"
                 />
               </div>
@@ -102,8 +113,9 @@ function UserRegister() {
                   <input
                     type="text"
                     placeholder="John"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
+                    value={userdata.firstName}
+                    name="firstName"
+                    onChange={handlechange}
                     className="bg-transparent outline-none w-full text-sm text-slate-200 placeholder-slate-500"
                   />
                 </div>
@@ -116,8 +128,9 @@ function UserRegister() {
                   <input
                     type="text"
                     placeholder="Doe"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
+                    value={userdata.lastName}
+                    name="lastName"
+                    onChange={handlechange}
                     className="bg-transparent outline-none w-full text-sm text-slate-200 placeholder-slate-500"
                   />
                 </div>
@@ -134,8 +147,9 @@ function UserRegister() {
                 <input
                   type="password"
                   placeholder="••••••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={userdata.password}
+                  name="password"
+                  onChange={handlechange}
                   className="bg-transparent outline-none w-full text-sm text-slate-200 placeholder-slate-500"
                   required
                 />
@@ -155,9 +169,9 @@ function UserRegister() {
         {/* Footer info / Login link */}
         <p className="text-center text-xs text-slate-500 mt-6">
           Already have an account?{" "}
-          <Link to="/user" className="text-purple-400 hover:underline font-medium">
+          <NavLink to={'/userlogin'} className="text-purple-400 hover:underline font-medium">
             Sign in
-          </Link>
+          </NavLink>
         </p>
       </div>
     </div>

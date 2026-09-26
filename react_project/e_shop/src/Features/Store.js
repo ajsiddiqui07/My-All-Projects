@@ -3,6 +3,7 @@ import authreduser from "./authSlice";
 import Catreducer from "./CategorySlice";
 import productreducer from "./ProductSlice";
 import adminreducer from "./AdminSlice";
+import userreducer from "./UserRegisterSlice";
 
 
 const store = configureStore({
@@ -11,6 +12,7 @@ const store = configureStore({
         'categories':Catreducer,
         'products':productreducer,
         'admin':adminreducer,
+        'user':userreducer,
     }
 })
 
