@@ -86,6 +86,7 @@ const navigate = useNavigate()
           </div>
           <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition" onClick={()=>{
             dispatch(logout())
+            localStorage.removeItem("tokens")
             toast.success("Logged out successfully!")
             navigate('/adminlogin')
           }}>

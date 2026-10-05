@@ -33,7 +33,7 @@ class Product(models.Model):
 # Cart Model
 # -------------------------
 class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="carts")
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="carts")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

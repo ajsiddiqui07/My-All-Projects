@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../Features/authSlice";
 import { toast } from "react-toastify";
+import { getCart } from "../../Features/CartSlice";
 
 function UserProfile() {
 
@@ -14,6 +15,7 @@ function UserProfile() {
 
   const handleLogout = () => {
     dispatch(logout());
+    localStorage.removeItem("tokens")
     toast.success('Logged out successfully!')
     navigate("/userlogin");
   };

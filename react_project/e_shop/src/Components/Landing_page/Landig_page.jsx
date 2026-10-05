@@ -6,6 +6,7 @@ import Footer from '../Templates/Footer';
 import Categories from '../Categories/Categorise';
 import Products from '../Product/Products';
 import LimitedTime from '../Limited_time/LimitedTime';
+import HomeProduct from './HomeProduct';
 
 const PRODUCTS = [
   {
@@ -288,7 +289,7 @@ export default function Landing_page() {
 </div>
 
       {/* Featured Products Section */}
-      <Products/>
+      <HomeProduct/>
        
       {/* Limited Time Flash Deal */}
       <LimitedTime/>

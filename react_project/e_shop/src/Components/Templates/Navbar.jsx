@@ -5,8 +5,12 @@ import { logout } from "../../Features/authSlice";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
+import { getCart } from "../../Features/CartSlice";
+
 
 function Navbar() {
+  const token = JSON.parse(localStorage.getItem("tokens"))
   const [searchQuery, setSearchQuery] = useState("");
   const [wishlistCount, setWishlistCount] = useState(0);
   const [cartOpen, setCartOpen] = useState(false);
@@ -177,7 +181,7 @@ function Navbar() {
             </button>
 
             <button
-              onClick={() => setCartOpen(true)}
+              onClick={() =>{  token?navigate("/user/cart"):toast.error("User Login Requred?"), dispatch(getCart()) }}
               className="relative bg-purple-600 text-white px-4 py-2 rounded-full flex items-center"
             >
               🛒 Cart

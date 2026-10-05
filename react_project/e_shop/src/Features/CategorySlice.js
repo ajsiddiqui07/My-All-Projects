@@ -7,11 +7,8 @@ export const getcategories = createAsyncThunk('getcategories',async()=>{
        
 
     try {
-         const res = await axios.get("http://127.0.0.1:8000/api/categories/",{
-            headers:{
-                Authorization : `Bearer ${token.access}`
-            }
-         })
+         const res = await axios.get("http://127.0.0.1:8000/api/categories/")
+         
          const catdata = res.data
             
          return catdata

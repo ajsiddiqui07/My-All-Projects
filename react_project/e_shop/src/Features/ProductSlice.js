@@ -20,11 +20,7 @@ export const createproduct = createAsyncThunk('createproduct',async(data,proAPI)
 
 export const getproduct = createAsyncThunk('getproduct',async(proAPI)=>{
     try {
-        const res = await axios.get("http://127.0.0.1:8000/api/products/",{
-            headers:{
-                Authorization:`Bearer ${token.access}`
-            }
-        })
+        const res = await axios.get("http://127.0.0.1:8000/api/products/")
         return res.data
     } catch (error) {
         console.log(error);

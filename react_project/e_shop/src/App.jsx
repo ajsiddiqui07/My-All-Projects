@@ -14,6 +14,7 @@ import UserProfile from './Components/User/Userprofile'
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Categories from './Components/Categories/Categorise'
+import Usercart from './Components/User/Usercart'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -29,6 +30,7 @@ function App() {
         <Route path='/userregister' element={<UserRegister/>}></Route>
         <Route path='/user' element={<UserProfile/>}></Route>
         <Route path='/category' element={<Categories/>}></Route>
+        <Route path='/user/cart' element={<Usercart/>}></Route>
       </Routes>
       <ToastContainer  
        position="top-center"
