@@ -28,9 +28,11 @@ function UserLogin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
      dispatch(loginuser(logindata))
-     navigate('/user')
-     
+     setTimeout(() => {
+      navigate("/user")
+     }, 1000);
   };
+
 
   useEffect(()=>{
       if (userinfo) {

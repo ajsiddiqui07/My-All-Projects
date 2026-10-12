@@ -10,6 +10,8 @@ export const Registeruser = createAsyncThunk("Registeruser",async(logindata,regi
         return reguser
         
     } catch (error) {
+        console.log(error);
+        
         return registrAPI.rejectWithValue({
             error:error.response?.data
         })

@@ -16,8 +16,8 @@ function UserRegister() {
   const [ userdata, setUserdata ] = useState({
       username: '',
       email: '',
-      firstName: '',
-      lastName: '',
+      first_name: '',
+      last_name: '',
       password: '',
     })
   const handlechange = (e) => {
@@ -39,8 +39,10 @@ function UserRegister() {
   const handleRegister = async (e) => {
     e.preventDefault();
     dispatch(Registeruser(userdata))
-   navigate('/userlogin')
-  };
+    registerDetail && setTimeout(() => {
+      navigate('/userlogin')
+
+    }, 1000);  };
 
   return (
     <div className="min-h-screen bg-[#0d0f18] text-slate-100 font-sans flex items-center justify-center p-4">
@@ -113,8 +115,8 @@ function UserRegister() {
                   <input
                     type="text"
                     placeholder="John"
-                    value={userdata.firstName}
-                    name="firstName"
+                    value={userdata.first_name}
+                    name="first_name"
                     onChange={handlechange}
                     className="bg-transparent outline-none w-full text-sm text-slate-200 placeholder-slate-500"
                   />
@@ -128,8 +130,8 @@ function UserRegister() {
                   <input
                     type="text"
                     placeholder="Doe"
-                    value={userdata.lastName}
-                    name="lastName"
+                    value={userdata.last_name}
+                    name="last_name"
                     onChange={handlechange}
                     className="bg-transparent outline-none w-full text-sm text-slate-200 placeholder-slate-500"
                   />

@@ -7,6 +7,11 @@ import { toast } from "react-toastify";
 import { addCart, getCart } from "../../Features/CartSlice";
 
 function HomeProduct() {
+    const userdata = useSelector((state) => state.auth.user);
+   useEffect(()=>{
+     console.log(userdata);
+   },[])
+    
     const token = JSON.parse(localStorage.getItem("tokens"))
     const dispatch = useDispatch();
 
@@ -29,6 +34,8 @@ function HomeProduct() {
     // Add product to cart
     const addToCart = (product) => {
          dispatch(getCart());
+         console.log("function callend ");
+         
         if (token) {
             const data = {
                 "product_id": product.id
