@@ -1,0 +1,148 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+    <div>
+      <h2 style="font-size: 22px; font-weight: 700; color: #fff;">
+        {% if is_edit %}Edit Movie: {{ movie.title }}{% else %}Publish New Movie{% endif %}
+      </h2>
+      <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+        {% if is_edit %}Update metadata, replace poster art, or upload a new stream file.{% else %}Fill in movie synopsis, upload card & cover art, and attach video.{% endif %}
+      </p>
+    </div>
+    <a href="{% url 'admin_panel:movie_list' %}" class="action-btn action-btn-secondary">
+      ← Back to Movies
+    </a>
+  </div>
+
+  <div class="form-card">
+    <form method="POST" enctype="multipart/form-data" action="">
+      {% csrf_token %}
+
+      <!-- Title -->
+      <div class="form-group">
+        <label for="id_title" class="form-label">Movie Title *</label>
+        {{ form.title }}
+        {% if form.title.errors %}
+        <span class="form-error">{{ form.title.errors.0 }}</span>
+        {% endif %}
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label for="id_description" class="form-label">Synopsis / Description *</label>
+        {{ form.description }}
+        {% if form.description.errors %}
+        <span class="form-error">{{ form.description.errors.0 }}</span>
+        {% endif %}
+      </div>
+
+      <!-- 3-Column Meta Details -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px;">
+        <div class="form-group">
+          <label for="id_release_date" class="form-label">Release Date *</label>
+          {{ form.release_date }}
+          {% if form.release_date.errors %}
+          <span class="form-error">{{ form.release_date.errors.0 }}</span>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="id_genre" class="form-label">Genre Category *</label>
+          {{ form.genre }}
+          {% if form.genre.errors %}
+          <span class="form-error">{{ form.genre.errors.0 }}</span>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="id_length" class="form-label">Duration (Minutes) *</label>
+          {{ form.length }}
+          {% if form.length.errors %}
+          <span class="form-error">{{ form.length.errors.0 }}</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <hr style="border: none; border-top: 1px solid var(--border-subtle); margin: 24px 0;">
+      <h3 style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 16px;">Media & Stream Files</h3>
+
+      <!-- Card Image -->
+      <div class="form-group">
+        <label for="id_image_card" class="form-label">
+          Card Poster Image (Portrait Thumbnail) {% if not is_edit %}*{% endif %}
+        </label>
+        {{ form.image_card }}
+        <span class="form-help">Used for browsing cards, carousels, and search results. JPEG, PNG, WEBP, JFIF.</span>
+        {% if form.image_card.errors %}
+        <span class="form-error">{{ form.image_card.errors.0 }}</span>
+        {% endif %}
+
+        <div class="media-preview-container" id="card-preview-container" {% if not movie.image_card %}style="display: none;"{% endif %}>
+          <img id="card-preview" src="{% if movie.image_card %}{{ movie.image_card.url }}{% endif %}" alt="Card Preview" class="preview-thumb">
+          <div class="preview-info">
+            <strong style="color: #fff;">Card Preview</strong>
+            <p>{% if movie.image_card %}Current: {{ movie.image_card.name }}{% else %}New image selected{% endif %}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cover Image -->
+      <div class="form-group">
+        <label for="id_image_cover" class="form-label">
+          Cover Banner Image (Landscape / Hero) {% if not is_edit %}*{% endif %}
+        </label>
+        {{ form.image_cover }}
+        <span class="form-help">Used as the backdrop banner for the featured hero section and video player.</span>
+        {% if form.image_cover.errors %}
+        <span class="form-error">{{ form.image_cover.errors.0 }}</span>
+        {% endif %}
+
+        <div class="media-preview-container" id="cover-preview-container" {% if not movie.image_cover %}style="display: none;"{% endif %}>
+          <img id="cover-preview" src="{% if movie.image_cover %}{{ movie.image_cover.url }}{% endif %}" alt="Cover Preview" class="preview-thumb">
+          <div class="preview-info">
+            <strong style="color: #fff;">Cover Banner Preview</strong>
+            <p>{% if movie.image_cover %}Current: {{ movie.image_cover.name }}{% else %}New image selected{% endif %}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Video File -->
+      <div class="form-group">
+        <label for="id_video" class="form-label">
+          Movie Video File {% if not is_edit %}*{% endif %}
+        </label>
+        {{ form.video }}
+        <span class="form-help">Streamable video file (e.g. MP4, WEBM, MKV, or mock media).</span>
+        {% if form.video.errors %}
+        <span class="form-error">{{ form.video.errors.0 }}</span>
+        {% endif %}
+
+        {% if is_edit and movie.video %}
+        <div class="media-preview-container">
+          <div class="preview-info">
+            <strong style="color: #fff;">Current Stream Asset:</strong>
+            <p style="margin-top: 3px;">
+              <a href="{{ movie.video.url }}" target="_blank" style="color: var(--color-info); text-decoration: underline;">
+                {{ movie.video.name }} ↗
+              </a>
+            </p>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <div style="display: flex; align-items: center; justify-content: flex-end; gap: 14px; margin-top: 30px;">
+        <a href="{% url 'admin_panel:movie_list' %}" class="action-btn action-btn-secondary">
+          Cancel
+        </a>
+        <button type="submit" class="action-btn action-btn-primary" style="padding: 12px 28px;">
+          {% if is_edit %}Save Changes{% else %}Publish Movie{% endif %}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

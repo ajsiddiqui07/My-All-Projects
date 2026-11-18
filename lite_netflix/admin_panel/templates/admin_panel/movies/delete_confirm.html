@@ -1,0 +1,34 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block content %}
+<div style="max-width: 520px; margin: 40px auto;">
+  <div class="form-card" style="border-color: rgba(239, 68, 68, 0.3);">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px;">
+      <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--color-danger-bg); color: var(--color-danger); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+      </div>
+      <div>
+        <h2 style="font-size: 18px; font-weight: 700; color: #fff;">Confirm Movie Deletion</h2>
+        <span style="font-size: 12px; color: var(--text-muted);">Irreversible database operation</span>
+      </div>
+    </div>
+
+    <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
+      Are you sure you want to permanently delete movie <strong style="color: #fff;">"{{ movie.title }}"</strong> (UUID: {{ movie.uu_id }})?
+      All associated bookmarks in user lists will also be removed.
+    </p>
+
+    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 12px;">
+      <a href="{% url 'admin_panel:movie_list' %}" class="action-btn action-btn-secondary">
+        Cancel
+      </a>
+      <form method="POST" action="{% url 'admin_panel:movie_delete' movie.uu_id %}">
+        {% csrf_token %}
+        <button type="submit" class="action-btn action-btn-primary" style="background: var(--color-danger);">
+          Permanently Delete
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

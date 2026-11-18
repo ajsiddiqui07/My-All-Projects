@@ -1,0 +1,219 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Quick Actions Shortcut Bar -->
+<div class="quick-actions-bar">
+  <a href="{% url 'admin_panel:movie_add' %}" class="action-btn action-btn-primary">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    <span>Upload / Add Movie</span>
+  </a>
+  <a href="{% url 'admin_panel:movie_list' %}" class="action-btn action-btn-secondary">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+    <span>Manage Movies</span>
+  </a>
+  <a href="{% url 'admin_panel:user_list' %}" class="action-btn action-btn-secondary">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+    <span>Manage Users</span>
+  </a>
+  <a href="{% url 'admin_panel:my_list' %}" class="action-btn action-btn-secondary">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+    <span>Manage Bookmarks</span>
+  </a>
+</div>
+
+<!-- Key Performance Metric Cards -->
+<div class="metrics-grid">
+  <!-- Total Movies -->
+  <div class="metric-card">
+    <div class="metric-info">
+      <span class="metric-label">Total Catalog Movies</span>
+      <span class="metric-value">{{ total_movies }}</span>
+      <span class="metric-subtext">Active titles ready for streaming</span>
+    </div>
+    <div class="metric-icon-wrap metric-icon-red">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+    </div>
+  </div>
+
+  <!-- Total Movie Views -->
+  <div class="metric-card">
+    <div class="metric-info">
+      <span class="metric-label">Total Movie Streams</span>
+      <span class="metric-value">{{ total_views }}</span>
+      <span class="metric-subtext">Cumulative view counts across catalog</span>
+    </div>
+    <div class="metric-icon-wrap metric-icon-purple">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+    </div>
+  </div>
+
+  <!-- Total Registered Users -->
+  <div class="metric-card">
+    <div class="metric-info">
+      <span class="metric-label">Total Registered Users</span>
+      <span class="metric-value">{{ total_users }}</span>
+      <span class="metric-subtext">{{ active_users }} active &bull; {{ inactive_users }} inactive</span>
+    </div>
+    <div class="metric-icon-wrap metric-icon-blue">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+    </div>
+  </div>
+
+  <!-- Saved Bookmarks (My List) -->
+  <div class="metric-card">
+    <div class="metric-info">
+      <span class="metric-label">Saved to My List</span>
+      <span class="metric-value">{{ total_my_list }}</span>
+      <span class="metric-subtext">User personalized bookmarks</span>
+    </div>
+    <div class="metric-icon-wrap metric-icon-green">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- Visual Database Analytics Charts -->
+<div class="charts-grid">
+  <!-- Top Movies Bar Chart -->
+  <div class="chart-card">
+    <div class="chart-header">
+      <h3 class="chart-title">Most Streamed Movies</h3>
+      <span class="chart-badge">Live View Metrics</span>
+    </div>
+    <div class="chart-canvas-container">
+      <canvas id="topMoviesChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Genre Distribution Doughnut Chart -->
+  <div class="chart-card">
+    <div class="chart-header">
+      <h3 class="chart-title">Movies by Genre</h3>
+      <span class="chart-badge">Catalog Breakdown</span>
+    </div>
+    <div class="chart-canvas-container">
+      <canvas id="genreChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Two-Column Recent Activity Section -->
+<div class="charts-grid">
+  <!-- Recently Added Movies -->
+  <div class="card-table-wrap">
+    <div class="card-header-flex">
+      <h3 class="card-title">Recently Added Movies</h3>
+      <a href="{% url 'admin_panel:movie_list' %}" style="font-size: 12px; color: var(--netflix-red); font-weight: 600;">View All →</a>
+    </div>
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Movie</th>
+            <th>Genre</th>
+            <th>Views</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for movie in recent_movies %}
+          <tr>
+            <td>
+              <div class="movie-thumb-cell">
+                {% if movie.image_card %}
+                <img src="{{ movie.image_card.url }}" alt="{{ movie.title }}" class="movie-thumb-img">
+                {% else %}
+                <div class="movie-thumb-img" style="display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:10px;">No Img</div>
+                {% endif %}
+                <div class="movie-cell-info">
+                  <span class="movie-cell-title">{{ movie.title }}</span>
+                  <span class="movie-cell-uuid">{{ movie.release_date|date:"M Y" }} &bull; {{ movie.length }}m</span>
+                </div>
+              </div>
+            </td>
+            <td><span class="badge badge-genre">{{ movie.get_genre_display }}</span></td>
+            <td><strong style="color: #fff;">{{ movie.movie_views }}</strong></td>
+            <td>
+              <div class="table-actions">
+                <a href="{% url 'admin_panel:movie_preview' movie.uu_id %}" class="btn-icon" title="Preview Movie">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </a>
+                <a href="{% url 'admin_panel:movie_edit' movie.uu_id %}" class="btn-icon" title="Edit Movie">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" style="text-align: center; padding: 30px; color: var(--text-muted);">No movies in catalog yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recent User Registrations -->
+  <div class="card-table-wrap">
+    <div class="card-header-flex">
+      <h3 class="card-title">Recent User Registrations</h3>
+      <a href="{% url 'admin_panel:user_list' %}" style="font-size: 12px; color: var(--netflix-red); font-weight: 600;">View All →</a>
+    </div>
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Role</th>
+            <th>Joined</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in recent_users %}
+          <tr>
+            <td>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div class="user-avatar-circle" style="width: 32px; height: 32px; font-size: 12px;">
+                  {{ u.username|make_list|first|upper }}
+                </div>
+                <div style="display: flex; flex-direction: column;">
+                  <strong style="color: #fff; font-size: 13px;">{{ u.username }}</strong>
+                  <span style="font-size: 11px; color: var(--text-muted);">{{ u.email|default:"No email" }}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              {% if u.is_superuser %}
+              <span class="badge badge-superuser">Superuser</span>
+              {% elif u.is_staff %}
+              <span class="badge badge-staff">Staff</span>
+              {% else %}
+              <span class="badge badge-regular">Member</span>
+              {% endif %}
+            </td>
+            <td>{{ u.date_joined|date:"M d, Y" }}</td>
+            <td>
+              <a href="{% url 'admin_panel:user_edit' u.id %}" class="btn-icon" title="Edit User">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" style="text-align: center; padding: 30px; color: var(--text-muted);">No users found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Embedded JSON Data for Chart.js -->
+<script id="charts-data" type="application/json">
+  {{ charts_json|safe }}
+</script>
+{% endblock %}

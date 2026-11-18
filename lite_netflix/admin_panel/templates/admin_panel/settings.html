@@ -1,0 +1,120 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+  <div style="margin-bottom: 24px;">
+    <h2 style="font-size: 22px; font-weight: 700; color: #fff;">System & Admin Settings</h2>
+    <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+      Runtime environment telemetry, database health metrics, and administrative utilities
+    </p>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 24px;">
+    <!-- Architecture & Platform Card -->
+    <div class="form-card">
+      <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 18px; display: flex; align-items: center; gap: 10px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+        <span>Platform & Environment Information</span>
+      </h3>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; font-size: 13px;">
+        <div style="background: rgba(0,0,0,0.25); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+          <span style="color: var(--text-muted); font-size: 11px; text-transform: uppercase;">Framework</span>
+          <p style="color: #fff; font-weight: 600; font-size: 15px; margin-top: 4px;">Django {{ system_info.django_version }}</p>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.25); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+          <span style="color: var(--text-muted); font-size: 11px; text-transform: uppercase;">Python Runtime</span>
+          <p style="color: #fff; font-weight: 600; font-size: 15px; margin-top: 4px;">Python {{ system_info.python_version }}</p>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.25); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+          <span style="color: var(--text-muted); font-size: 11px; text-transform: uppercase;">Database Engine</span>
+          <p style="color: #fff; font-weight: 600; font-size: 15px; margin-top: 4px;">{{ system_info.database_engine|title }}</p>
+          <span style="font-size: 11px; color: var(--text-muted);">Size: {{ system_info.db_size_kb }} KB</span>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.25); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+          <span style="color: var(--text-muted); font-size: 11px; text-transform: uppercase;">Operating System</span>
+          <p style="color: #fff; font-weight: 600; font-size: 15px; margin-top: 4px;">{{ system_info.os_name }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Storage & Media Diagnostics Card -->
+    <div class="form-card">
+      <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 18px; display: flex; align-items: center; gap: 10px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <span>Media Storage Health</span>
+      </h3>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-bottom: 16px;">
+        <div style="background: rgba(0,0,0,0.25); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+          <span style="color: var(--text-muted); font-size: 11px; text-transform: uppercase;">Total Media Assets</span>
+          <p style="color: #fff; font-weight: 700; font-size: 18px; margin-top: 4px;">{{ system_info.media_files_count }} files</p>
+          <span style="font-size: 11px; color: var(--text-muted);">Stored on local disk</span>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.25); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+          <span style="color: var(--text-muted); font-size: 11px; text-transform: uppercase;">Media Disk Usage</span>
+          <p style="color: #fff; font-weight: 700; font-size: 18px; margin-top: 4px;">{{ system_info.media_size_mb }} MB</p>
+          <span style="font-size: 11px; color: var(--text-muted);">Videos, Cards, & Covers</span>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.25); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+          <span style="color: var(--text-muted); font-size: 11px; text-transform: uppercase;">Debug Mode Status</span>
+          <p style="font-weight: 700; font-size: 18px; margin-top: 4px; {% if system_info.debug_mode %}color: var(--color-warning);{% else %}color: var(--color-success);{% endif %}">
+            {% if system_info.debug_mode %}DEBUG ACTIVE{% else %}PRODUCTION MODE{% endif %}
+          </p>
+          <span style="font-size: 11px; color: var(--text-muted);">Development configuration</span>
+        </div>
+      </div>
+
+      <div style="font-size: 12px; color: var(--text-secondary); background: rgba(0,0,0,0.2); padding: 12px; border-radius: var(--radius-sm); border-left: 3px solid var(--netflix-red);">
+        <strong>MEDIA_ROOT Path:</strong> <code style="font-family: monospace; color: #fff;">{{ system_info.media_root }}</code>
+      </div>
+    </div>
+
+    <!-- Administrative Maintenance Utilities -->
+    <div class="form-card">
+      <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 18px; display: flex; align-items: center; gap: 10px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        <span>Database & Session Maintenance</span>
+      </h3>
+
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 16px; background: rgba(0,0,0,0.25); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+        <div>
+          <strong style="color: #fff; font-size: 14px;">Purge Expired Database Sessions</strong>
+          <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">
+            Executes Django's built-in <code style="color: #ddd;">clearsessions</code> management routine to remove stale visitor and user session records from the database table.
+          </p>
+        </div>
+        <form method="POST" action="{% url 'admin_panel:settings' %}">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="clear_sessions">
+          <button type="submit" class="action-btn action-btn-secondary" style="white-space: nowrap;">
+            Run Session Cleanup
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Security & Access Summary Card -->
+    <div class="form-card">
+      <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 14px;">Security & Administrator Auditing</h3>
+      <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px;">
+        Currently there are <strong style="color: #fff;">{{ system_info.total_superusers }} superuser account(s)</strong> with complete administrative authority over the Netflix backend and database.
+      </p>
+
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <a href="{% url 'admin_panel:user_list' %}?role=superuser" class="action-btn action-btn-secondary">
+          Audit Superuser Accounts
+        </a>
+        <a href="{% url 'admin_panel:profile' %}" class="action-btn action-btn-primary">
+          Update Admin Security Credentials
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Search and Filters Toolbar -->
+<div class="toolbar-wrap">
+  <form method="GET" action="{% url 'admin_panel:movie_list' %}" class="search-form">
+    <input type="text" name="q" value="{{ q }}" placeholder="Search by title or synopsis..." class="admin-input">
+    {% if current_genre %}<input type="hidden" name="genre" value="{{ current_genre }}">{% endif %}
+    {% if current_sort %}<input type="hidden" name="sort" value="{{ current_sort }}">{% endif %}
+    <button type="submit" class="action-btn action-btn-secondary" style="padding: 10px 14px;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+  </form>
+
+  <div class="filter-group">
+    <!-- Genre Filter -->
+    <form method="GET" action="{% url 'admin_panel:movie_list' %}" style="display: flex; gap: 8px;">
+      {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
+      {% if current_sort %}<input type="hidden" name="sort" value="{{ current_sort }}">{% endif %}
+      <select name="genre" class="admin-select" onchange="this.form.submit()" style="min-width: 140px;">
+        <option value="">All Genres</option>
+        {% for val, label in genre_choices %}
+        <option value="{{ val }}" {% if current_genre == val %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </form>
+
+    <!-- Sort Selector -->
+    <form method="GET" action="{% url 'admin_panel:movie_list' %}" style="display: flex; gap: 8px;">
+      {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
+      {% if current_genre %}<input type="hidden" name="genre" value="{{ current_genre }}">{% endif %}
+      <select name="sort" class="admin-select" onchange="this.form.submit()" style="min-width: 160px;">
+        <option value="id_desc" {% if current_sort == 'id_desc' or not current_sort %}selected{% endif %}>Newest Added</option>
+        <option value="views_desc" {% if current_sort == 'views_desc' %}selected{% endif %}>Most Streamed</option>
+        <option value="views_asc" {% if current_sort == 'views_asc' %}selected{% endif %}>Least Streamed</option>
+        <option value="title_asc" {% if current_sort == 'title_asc' %}selected{% endif %}>Title (A-Z)</option>
+        <option value="title_desc" {% if current_sort == 'title_desc' %}selected{% endif %}>Title (Z-A)</option>
+        <option value="date_desc" {% if current_sort == 'date_desc' %}selected{% endif %}>Release (Latest)</option>
+        <option value="length_desc" {% if current_sort == 'length_desc' %}selected{% endif %}>Longest Duration</option>
+      </select>
+    </form>
+
+    <a href="{% url 'admin_panel:movie_add' %}" class="action-btn action-btn-primary">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <span>New Movie</span>
+    </a>
+  </div>
+</div>
+
+<!-- Movies Catalog Table Card -->
+<div class="card-table-wrap">
+  <div class="card-header-flex">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <h3 class="card-title">Movies Catalog</h3>
+      <span style="font-size: 12px; color: var(--text-muted);">({{ total_count }} titles)</span>
+    </div>
+    {% if q or current_genre %}
+    <a href="{% url 'admin_panel:movie_list' %}" style="font-size: 12px; color: var(--color-danger);">Clear Active Filters ✕</a>
+    {% endif %}
+  </div>
+
+  <div class="table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Poster & Title</th>
+          <th>Genre</th>
+          <th>Release Date</th>
+          <th>Duration</th>
+          <th>Streams</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for movie in movies %}
+        <tr>
+          <td>
+            <div class="movie-thumb-cell">
+              {% if movie.image_card %}
+              <img src="{{ movie.image_card.url }}" alt="{{ movie.title }}" class="movie-thumb-img">
+              {% else %}
+              <div class="movie-thumb-img" style="display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:10px;">No Img</div>
+              {% endif %}
+              <div class="movie-cell-info">
+                <a href="{% url 'admin_panel:movie_preview' movie.uu_id %}" class="movie-cell-title" style="color: #fff; text-decoration: none;">
+                  {{ movie.title }}
+                </a>
+                <span class="movie-cell-uuid">UUID: {{ movie.uu_id }}</span>
+              </div>
+            </div>
+          </td>
+          <td><span class="badge badge-genre">{{ movie.get_genre_display }}</span></td>
+          <td>{{ movie.release_date|date:"M d, Y" }}</td>
+          <td>{{ movie.length }} mins</td>
+          <td>
+            <span class="badge" style="background: rgba(229, 9, 20, 0.12); color: #ff6b6b;">
+              {{ movie.movie_views }} views
+            </span>
+          </td>
+          <td style="text-align: right;">
+            <div class="table-actions" style="justify-content: flex-end;">
+              <a href="{% url 'admin_panel:movie_preview' movie.uu_id %}" class="btn-icon" title="Preview Movie">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </a>
+              <a href="{% url 'admin_panel:movie_edit' movie.uu_id %}" class="btn-icon" title="Edit Movie">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </a>
+              <button type="button" class="btn-icon btn-icon-danger" title="Delete Movie"
+                      data-action="open-delete-modal"
+                      data-delete-url="{% url 'admin_panel:movie_delete' movie.uu_id %}"
+                      data-item-name="movie '{{ movie.title }}'">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6">
+            <div class="empty-state">
+              <div class="empty-state-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+              </div>
+              <h4 class="empty-state-title">No movies match your criteria</h4>
+              <p class="empty-state-desc">Try clearing filters or search terms, or publish a new movie to expand the catalog.</p>
+              <a href="{% url 'admin_panel:movie_add' %}" class="action-btn action-btn-primary" style="margin-top: 8px;">
+                Add New Movie
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination Controls -->
+  {% if movies.has_other_pages %}
+  <div class="pagination-wrap">
+    <span>Showing page {{ movies.number }} of {{ movies.paginator.num_pages }}</span>
+    <div class="pagination-controls">
+      {% if movies.has_previous %}
+      <a href="?page={{ movies.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if current_genre %}&genre={{ current_genre }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}" class="page-btn">‹ Prev</a>
+      {% else %}
+      <span class="page-btn disabled">‹ Prev</span>
+      {% endif %}
+
+      {% for p in movies.paginator.page_range %}
+        {% if p == movies.number %}
+        <span class="page-btn active">{{ p }}</span>
+        {% elif p > movies.number|add:'-3' and p < movies.number|add:'3' %}
+        <a href="?page={{ p }}{% if q %}&q={{ q }}{% endif %}{% if current_genre %}&genre={{ current_genre }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}" class="page-btn">{{ p }}</a>
+        {% endif %}
+      {% endfor %}
+
+      {% if movies.has_next %}
+      <a href="?page={{ movies.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if current_genre %}&genre={{ current_genre }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}" class="page-btn">Next ›</a>
+      {% else %}
+      <span class="page-btn disabled">Next ›</span>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

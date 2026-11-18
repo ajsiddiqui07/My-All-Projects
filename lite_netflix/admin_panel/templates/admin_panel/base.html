@@ -1,0 +1,198 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if page_title %}{{ page_title }} | {% endif %}Netflix Admin Console</title>
+  <link rel="stylesheet" href="{% static 'admin_panel/css/admin.css' %}">
+  <!-- Chart.js for DB Analytics Charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="admin-body">
+
+  <div class="admin-layout">
+    <!-- Sidebar Overlay for mobile -->
+    <div id="sidebar-overlay" class="modal-backdrop" style="background: rgba(0,0,0,0.6);"></div>
+
+    <!-- Sidebar -->
+    <aside id="admin-sidebar" class="admin-sidebar">
+      <div class="sidebar-brand">
+        <a href="{% url 'admin_panel:dashboard' %}" class="brand-link">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Logonetflix.png" alt="Netflix" class="brand-logo-img">
+          <span class="brand-badge">Admin</span>
+        </a>
+        <button id="close-sidebar-btn" class="sidebar-close-btn" aria-label="Close menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Core Management</div>
+
+        <a href="{% url 'admin_panel:dashboard' %}" class="nav-item {% if active_menu == 'dashboard' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="{% url 'admin_panel:movie_list' %}" class="nav-item {% if active_menu == 'movies' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+          <span>Movies Catalog</span>
+        </a>
+
+        <a href="{% url 'admin_panel:movie_add' %}" class="nav-item {% if active_menu == 'movies_add' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          <span>Add Movie</span>
+        </a>
+
+        <div class="nav-section-title">Users & Activity</div>
+
+        <a href="{% url 'admin_panel:user_list' %}" class="nav-item {% if active_menu == 'users' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>User Accounts</span>
+        </a>
+
+        <a href="{% url 'admin_panel:my_list' %}" class="nav-item {% if active_menu == 'my_list' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <span>My List Bookmarks</span>
+        </a>
+
+        <div class="nav-section-title">System & Account</div>
+
+        <a href="{% url 'admin_panel:profile' %}" class="nav-item {% if active_menu == 'profile' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Admin Profile</span>
+        </a>
+
+        <a href="{% url 'admin_panel:settings' %}" class="nav-item {% if active_menu == 'settings' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>System Settings</span>
+        </a>
+
+        <a href="{% url 'admin_panel:logout' %}" class="nav-item" style="color: #f87171; margin-top: auto;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span>Sign Out</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-quick-profile">
+          <div class="user-avatar-circle">
+            {{ request.user.username|make_list|first|upper }}
+          </div>
+          <div class="user-quick-info">
+            <div class="user-quick-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+            <div class="user-quick-role">Super Administrator</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+      <!-- Topbar -->
+      <header class="admin-topbar">
+        <div class="topbar-left">
+          <button id="open-sidebar-btn" class="mobile-menu-btn" aria-label="Open sidebar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <h1 class="topbar-title">{{ page_title|default:"Admin Console" }}</h1>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Link to Public Netflix Website -->
+          <a href="/" target="_blank" class="public-site-link" title="Open Public Netflix Site in new tab">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            <span>View Public Site</span>
+          </a>
+
+          <!-- User Menu Dropdown -->
+          <div class="topbar-dropdown-wrap">
+            <button id="user-dropdown-trigger" class="topbar-user-trigger" type="button">
+              <div class="user-avatar-circle" style="width: 32px; height: 32px; font-size: 12px;">
+                {{ request.user.username|make_list|first|upper }}
+              </div>
+              <span style="font-size: 13px; font-weight: 600; color: #fff;">{{ request.user.username }}</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-muted);"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+
+            <div id="user-dropdown-menu" class="topbar-dropdown-menu">
+              <div class="dropdown-header">
+                <div class="dropdown-header-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+                <div class="dropdown-header-email">{{ request.user.email|default:"Superuser Administrator" }}</div>
+              </div>
+              <a href="{% url 'admin_panel:profile' %}" class="dropdown-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>My Profile</span>
+              </a>
+              <a href="{% url 'admin_panel:settings' %}" class="dropdown-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>Settings</span>
+              </a>
+              <a href="{% url 'admin_panel:logout' %}" class="dropdown-item danger">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Sign Out</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content wrapper -->
+      <div class="admin-content">
+        <!-- Toast / Message Banners -->
+        {% if messages %}
+        <div class="admin-messages-container">
+          {% for message in messages %}
+          <div class="admin-alert alert-{{ message.tags }}">
+            <div class="admin-alert-content">
+              {% if message.tags == 'success' %}
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              {% elif message.tags == 'error' %}
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              {% else %}
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              {% endif %}
+              <span>{{ message }}</span>
+            </div>
+            <button class="admin-alert-close" type="button" aria-label="Dismiss">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+  </div>
+
+  <!-- Reusable Delete Confirmation Modal -->
+  <div id="delete-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" style="color: #f87171;">Confirm Permanent Deletion</h3>
+        <button id="close-delete-modal-btn" type="button" style="color: var(--text-muted); padding: 4px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to permanently delete <strong id="delete-modal-item-name" style="color: #fff;">this record</strong>?</p>
+        <p style="margin-top: 8px; font-size: 13px; color: var(--text-muted);">This action cannot be undone. All associated data will be removed from the database.</p>
+      </div>
+      <div class="modal-footer">
+        <button id="cancel-delete-btn" type="button" class="action-btn action-btn-secondary">Cancel</button>
+        <form id="delete-modal-form" method="POST" action="" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit" class="action-btn action-btn-primary" style="background: var(--color-danger);">Delete Permanently</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'admin_panel/js/admin.js' %}"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>
